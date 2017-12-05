@@ -40,8 +40,8 @@ public class MainActivity extends BaseActivity{
         setSupportActionBar(toolbar);
 
         fragmentList.clear();
-        fragmentList.add(new TwitterFragment());
-        fragmentList.add(new FlickrFragment());
+        fragmentList.add(TwitterFragment.newInstance());
+        fragmentList.add(FlickrFragment.newInstance());
 
 
         if (adapter == null) {

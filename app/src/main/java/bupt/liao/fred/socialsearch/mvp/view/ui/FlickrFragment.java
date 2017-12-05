@@ -26,4 +26,8 @@ public class FlickrFragment extends BaseFragment{
     public int getLayoutId() {
         return R.layout.fragment_flickr;
     }
+
+    public static FlickrFragment newInstance(){
+        return new FlickrFragment();
+    }
 }
