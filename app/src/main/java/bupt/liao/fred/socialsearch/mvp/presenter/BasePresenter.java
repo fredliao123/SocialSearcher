@@ -1,5 +1,8 @@
 package bupt.liao.fred.socialsearch.mvp.presenter;
 
+import android.app.Activity;
+import android.content.Context;
+
 import java.lang.ref.WeakReference;
 
 import bupt.liao.fred.socialsearch.mvp.view.IView;
@@ -10,7 +13,7 @@ import bupt.liao.fred.socialsearch.mvp.view.IView;
  * Description:
  */
 
-public class BasePresenter <V extends IView> implements IPresenter<V> {
+public abstract class BasePresenter <V extends IView> implements IPresenter<V> {
     private WeakReference<V> v;
 
     @Override
@@ -25,6 +28,7 @@ public class BasePresenter <V extends IView> implements IPresenter<V> {
         }
         v = null;
     }
+
 
     protected V getV() {
         if (v == null || v.get() == null) {

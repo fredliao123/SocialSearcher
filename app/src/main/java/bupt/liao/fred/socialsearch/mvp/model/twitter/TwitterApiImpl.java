@@ -4,7 +4,6 @@ package bupt.liao.fred.socialsearch.mvp.model.twitter;
 import java.util.List;
 
 import bupt.liao.fred.socialsearch.BuildConfig;
-import bupt.liao.fred.socialsearch.mvp.model.twitter.ITwitterApi;
 import rx.Observable;
 import rx.Subscriber;
 import twitter4j.Query;
@@ -81,11 +80,6 @@ public final class TwitterApiImpl implements ITwitterApi {
     @Override
     public int getApiRateLimitExceededErrorCode() {
         return API_RATE_LIMIT_EXCEEDED_ERROR_CODE;
-    }
-
-    @Override
-    public int getMaxTweetsPerRequest() {
-        return MAX_TWEETS_PER_REQUEST;
     }
 
     @Override

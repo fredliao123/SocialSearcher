@@ -2,6 +2,7 @@ package bupt.liao.fred.socialsearch.mvp.view.ui;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,15 +14,12 @@ import com.github.pwittchen.infinitescroll.library.InfiniteScrollListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import bupt.liao.fred.socialsearch.Conf;
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.mvp.presenter.TwitterPresenter;
 import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
 import bupt.liao.fred.socialsearch.mvp.view.adapter.TwitterAdapter;
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import timber.log.Timber;
 import twitter4j.Status;
 
 /**
@@ -30,7 +28,7 @@ import twitter4j.Status;
  * Description:
  */
 
-public class TwitterFragment extends BaseFragment<TwitterPresenter>{
+public class TwitterFragment extends BaseFragment<TwitterPresenter> {
 
     @BindView(R.id.recycler_view_container)
     RelativeLayout rlRecyclerViewContainer;
@@ -41,12 +39,8 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter>{
     @BindView(R.id.recycler_view_tweets)
     RecyclerView recyclerView;
 
-    RecyclerView.LayoutManager layoutManager;
+    LinearLayoutManager layoutManager;
 
-    @Override
-    public Object newP() {
-        return new TwitterPresenter();
-    }
 
     @Override
     public void initData(Bundle savedInstanceState) {
@@ -63,47 +57,15 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter>{
 
     @NonNull
     private InfiniteScrollListener createInfiniteScrollListener() {
-        return new InfiniteScrollListener(twitterApi.getMaxTweetsPerRequest(), layoutManager) {
-            @Override public void onScrolledToEnd(final int firstVisibleItemPosition) {
-                if (subLoadMoreTweets != null && !subLoadMoreTweets.isUnsubscribed()) {
-                    return;
-                }
-
-                final long lastTweetId = ((TweetsAdapter) recyclerViewTweets.getAdapter()).getLastTweetId();
-
-                subLoadMoreTweets = twitterApi.searchTweets(lastKeyword, lastTweetId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<List<Status>>() {
-                            @Override public void onStart() {
-                                progressLoadingMoreTweets.setVisibility(View.VISIBLE);
-                                Timber.d("loading more tweets");
-                            }
-
-                            @Override public void onCompleted() {
-                                progressLoadingMoreTweets.setVisibility(View.GONE);
-                                Timber.d("more tweets loaded");
-                                unsubscribe();
-                            }
-
-                            @Override public void onError(Throwable e) {
-                                if (!networkApi.isConnectedToInternet(MainActivity.this)) {
-                                    showSnackBar(msgNoInternetConnection);
-                                    Timber.d("no internet connection");
-                                } else {
-                                    showSnackBar(msgCannotLoadMoreTweets);
-                                }
-                                progressLoadingMoreTweets.setVisibility(View.GONE);
-                                Timber.d("couldn't load more tweets");
-                            }
-
-                            @Override public void onNext(List<Status> newTweets) {
-                                final TweetsAdapter newAdapter = createNewTweetsAdapter(newTweets);
-                                refreshView(recyclerViewTweets, newAdapter, firstVisibleItemPosition);
-                            }
-                        });
+        return new InfiniteScrollListener(Conf.MAX_TWEET_PER_REQUEST, layoutManager) {
+            @Override
+            public void onScrolledToEnd(int firstVisibleItemPosition) {
+                getP().scrollToEnd(firstVisibleItemPosition);
             }
+
         };
+
+
     }
 
     @Override
@@ -111,7 +73,44 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter>{
         return R.layout.fragment_twitter;
     }
 
-    public static TwitterFragment newInstance(){
+    public static TwitterFragment newInstance() {
         return new TwitterFragment();
     }
+
+    @Override
+    public TwitterPresenter newP() {
+        return TwitterPresenter.newInstance();
+    }
+
+
+    public void showSnackBar(final String message) {
+        final View containerId = getActivity().findViewById(R.id.container);
+        Snackbar.make(containerId, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @NonNull
+    public void createNewTweetsAdapterAndRefresh(List<Status> newTweets, int position) {
+        final TwitterAdapter adapter = (TwitterAdapter) recyclerView.getAdapter();
+        final List<Status> oldTweets = adapter.getTweets();
+        final List<Status> tweets = new LinkedList<>();
+        tweets.addAll(oldTweets);
+        tweets.addAll(newTweets);
+        TwitterAdapter newAdapter = new TwitterAdapter(getContext(), tweets);
+        recyclerView.setAdapter(newAdapter);
+        recyclerView.invalidate();
+        recyclerView.scrollToPosition(position);
+    }
+
+    public RelativeLayout getRlRecyclerViewContainer() {
+        return rlRecyclerViewContainer;
+    }
+
+    public ProgressBar getPbLoadMoreTweets() {
+        return pbLoadMoreTweets;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+    
 }

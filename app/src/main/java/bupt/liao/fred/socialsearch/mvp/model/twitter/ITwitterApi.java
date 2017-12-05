@@ -18,7 +18,6 @@ public interface ITwitterApi {
 
     int getApiRateLimitExceededErrorCode();
 
-    int getMaxTweetsPerRequest();
 
     boolean canSearchTweets(final String keyword);
 }

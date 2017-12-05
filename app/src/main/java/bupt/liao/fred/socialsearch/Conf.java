@@ -7,6 +7,9 @@ package bupt.liao.fred.socialsearch;
  */
 
 public class Conf {
+    public static final int MAX_TWEET_PER_REQUEST = 20;
+
+
     // #log
     public static boolean LOG = true;
     public static String LOG_TAG = "Social_Search";

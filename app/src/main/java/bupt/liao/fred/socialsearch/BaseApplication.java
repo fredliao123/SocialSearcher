@@ -1,6 +1,9 @@
 package bupt.liao.fred.socialsearch;
 
 import android.app.Application;
+import android.content.Context;
+
+import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.di.ApplicationComponent;
 import bupt.liao.fred.socialsearch.di.DaggerApplicationComponent;
@@ -15,12 +18,14 @@ import timber.log.Timber;
  */
 
 public final class BaseApplication extends Application {
-    private ApplicationComponent component;
+    private static ApplicationComponent component;
+    private static Context context;
 
     @Override public void onCreate() {
         super.onCreate();
         buildApplicationComponent();
         plantLoggingTree();
+        context = getApplicationContext();
     }
 
     private void buildApplicationComponent() {
@@ -38,8 +43,12 @@ public final class BaseApplication extends Application {
         }
     }
 
-    public ApplicationComponent getComponent() {
+    public static ApplicationComponent getComponent() {
         return component;
+    }
+
+    public static Context getContext(){
+        return context;
     }
 
     private static class CrashReportingTree extends Timber.Tree {
