@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.base;
+package bupt.liao.fred.socialsearch.mvp.view;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,12 +10,11 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import bupt.liao.fred.socialsearch.Conf;
-import bupt.liao.fred.socialsearch.base.viewdelegate.IViewDelegate;
-import bupt.liao.fred.socialsearch.base.viewdelegate.ViewDelegateBase;
+import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.IViewDelegate;
+import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.ViewDelegateBase;
 import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;
-import bupt.liao.fred.socialsearch.mvp.view.IView;
 import butterknife.Unbinder;
 
 /**
@@ -24,7 +23,7 @@ import butterknife.Unbinder;
  * Description:
  */
 
-public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatActivity implements IView<P> {
+public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatActivity implements IViewBase<P> {
 
     private IViewDelegate vDelegate;
     private P p;

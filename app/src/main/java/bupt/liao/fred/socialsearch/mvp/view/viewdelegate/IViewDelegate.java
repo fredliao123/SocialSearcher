@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.base.viewdelegate;
+package bupt.liao.fred.socialsearch.mvp.view.viewdelegate;
 
 import android.view.View;
 

@@ -24,3 +24,5 @@ proguard/
 # Others
 .idea/
 *.iml
+
+gradle.properties
