@@ -18,6 +18,7 @@ import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
 import bupt.liao.fred.socialsearch.mvp.view.adapter.BaseFragmentPagerAdapter;
 import butterknife.BindView;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity{
     @BindView(R.id.toolbar)
@@ -38,7 +39,7 @@ public class MainActivity extends BaseActivity{
     @Override
     public void initData(Bundle savedInstanceState) {
         setSupportActionBar(toolbar);
-
+        initSearchView();
         fragmentList.clear();
         fragmentList.add(TwitterFragment.newInstance());
         fragmentList.add(FlickrFragment.newInstance());
@@ -51,6 +52,27 @@ public class MainActivity extends BaseActivity{
         viewPager.setOffscreenPageLimit(2);
 
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void initSearchView() {
+        searchView.setVoiceSearch(false);
+        searchView.setCursorDrawable(R.drawable.search_view_cursor);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(final String query) {
+                Timber.d("pressed search icon");
+                if(fragmentList.get(0) instanceof TwitterFragment) {
+                    ((TwitterFragment)fragmentList.get(0)).searchTweets(query);
+                }
+                return false;
+            }
+
+            @Override public boolean onQueryTextChange(String newText) {
+                if(fragmentList.get(0) instanceof TwitterFragment) {
+                    ((TwitterFragment)fragmentList.get(0)).searchTweetsWithDelay(newText);
+                }
+                return false;
+            }
+        });
     }
 
     @Override

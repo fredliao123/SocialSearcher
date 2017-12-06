@@ -2,6 +2,7 @@ package bupt.liao.fred.socialsearch.mvp.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.kit.StringKit;
 import twitter4j.Status;
 
 /**
@@ -55,7 +57,9 @@ public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHold
         final DateTime createdAt = new DateTime(tweet.getCreatedAt());
         final DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_TIME_PATTERN);
         holder.tvDate.setText(formatter.print(createdAt));
-        holder.tvMessage.setText(tweet.getText());
+        String[] urls = StringKit.getInstance().extractLinks(tweet.getText());
+        holder.tvMessage.setText(StringKit.getInstance().getSpanText(context, urls, tweet.getText()));
+        holder.tvMessage.setMovementMethod(LinkMovementMethod.getInstance ());
     }
 
     @Override

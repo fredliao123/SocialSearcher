@@ -4,6 +4,7 @@ package bupt.liao.fred.socialsearch.mvp.model.twitter;
 import java.util.List;
 
 import bupt.liao.fred.socialsearch.BuildConfig;
+import bupt.liao.fred.socialsearch.Conf;
 import rx.Observable;
 import rx.Subscriber;
 import twitter4j.Query;
@@ -22,7 +23,6 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 
 public final class TwitterApiImpl implements ITwitterApi {
-    private static final int MAX_TWEETS_PER_REQUEST = 100;
     private static final int API_RATE_LIMIT_EXCEEDED_ERROR_CODE = 88;
     private final Twitter twitterInstance;
 
@@ -49,7 +49,7 @@ public final class TwitterApiImpl implements ITwitterApi {
             @Override
             public void call(Subscriber<? super List<Status>> subscriber) {
                 try {
-                    final Query query = new Query(keyword).count(MAX_TWEETS_PER_REQUEST);
+                    final Query query = new Query(keyword).count(Conf.MAX_TWEET_PER_REQUEST);
                     final QueryResult result = twitterInstance.search(query);
                     subscriber.onNext(result.getTweets());
                     subscriber.onCompleted();
@@ -66,7 +66,7 @@ public final class TwitterApiImpl implements ITwitterApi {
             @Override
             public void call(Subscriber<? super List<Status>> subscriber) {
                 try {
-                    final Query query = new Query(keyword).maxId(maxTweetId).count(MAX_TWEETS_PER_REQUEST);
+                    final Query query = new Query(keyword).maxId(maxTweetId).count(Conf.MAX_TWEET_PER_REQUEST);
                     final QueryResult result = twitterInstance.search(query);
                     subscriber.onNext(result.getTweets());
                     subscriber.onCompleted();

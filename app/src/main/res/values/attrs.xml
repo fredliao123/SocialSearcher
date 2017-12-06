@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseStateControllerLayout">
+        <attr name="loadingLayoutId" format="integer" />
+        <attr name="errorLayoutId" format="integer" />
+        <attr name="emptyLayoutId" format="integer" />
+        <attr name="contentLayoutId" format="integer" />
+    </declare-styleable>
+</resources>

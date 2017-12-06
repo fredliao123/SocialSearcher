@@ -19,6 +19,7 @@ import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.mvp.presenter.TwitterPresenter;
 import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
 import bupt.liao.fred.socialsearch.mvp.view.adapter.TwitterAdapter;
+import butterknife.BindString;
 import butterknife.BindView;
 import twitter4j.Status;
 
@@ -30,11 +31,22 @@ import twitter4j.Status;
 
 public class TwitterFragment extends BaseFragment<TwitterPresenter> {
 
+    @BindString(R.string.no_internet_connection) public String msgNoInternetConnection;
+    @BindString(R.string.cannot_load_more_tweets) public String msgCannotLoadMoreTweets;
+    @BindString(R.string.no_tweets) public String msgNoTweets;
+    @BindString(R.string.no_tweets_formatted) public String msgNoTweetsFormatted;
+    @BindString(R.string.searched_formatted) public String msgSearchedFormatted;
+    @BindString(R.string.api_rate_limit_exceeded) public String msgApiRateLimitExceeded;
+    @BindString(R.string.error_during_search) public String msgErrorDuringSearch;
+
     @BindView(R.id.recycler_view_container)
     RelativeLayout rlRecyclerViewContainer;
 
     @BindView(R.id.pb_loading_more_tweets)
     ProgressBar pbLoadMoreTweets;
+
+    @BindView(R.id.pb_loading_tweets)
+    ProgressBar pbLoadingTweets;
 
     @BindView(R.id.recycler_view_tweets)
     RecyclerView recyclerView;
@@ -45,6 +57,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     @Override
     public void initData(Bundle savedInstanceState) {
         initRecyclerView();
+
     }
 
     private void initRecyclerView() {
@@ -62,10 +75,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
             public void onScrolledToEnd(int firstVisibleItemPosition) {
                 getP().scrollToEnd(firstVisibleItemPosition);
             }
-
         };
-
-
     }
 
     @Override
@@ -101,6 +111,35 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         recyclerView.scrollToPosition(position);
     }
 
+    public void showSearchResult(final List<Status> tweets, final String keyword){
+        final TwitterAdapter adapter = new TwitterAdapter(getContext(), tweets);
+        recyclerView.setAdapter(adapter);
+        recyclerView.invalidate();
+        recyclerView.setVisibility(View.VISIBLE);
+        //TODO
+        //messageContainerLayout.setVisibility(View.GONE);
+        final String message = String.format(msgSearchedFormatted, keyword);
+        showSnackBar(message);
+    }
+
+    public void showErrorMessageContainer(final String message, final int imageResourceId) {
+        //TODO
+    }
+
+    public void searchTweets(String keywords){
+        getP().searchTweets(keywords);
+    }
+
+    public void searchTweetsWithDelay(String keywords){
+        getP().searchTweetsWithDelay(keywords);
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        getP().safelyUnsubscribeAll();
+    }
+
     public RelativeLayout getRlRecyclerViewContainer() {
         return rlRecyclerViewContainer;
     }
@@ -112,5 +151,8 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     public RecyclerView getRecyclerView() {
         return recyclerView;
     }
-    
+
+    public ProgressBar getPbLoadingTweets() {
+        return pbLoadingTweets;
+    }
 }
