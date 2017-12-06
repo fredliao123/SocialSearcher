@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.view.ui;
+package bupt.liao.fred.socialsearch.twitter.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,11 +14,10 @@ import com.github.pwittchen.infinitescroll.library.InfiniteScrollListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import bupt.liao.fred.socialsearch.Conf;
+import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.mvp.presenter.TwitterPresenter;
+import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
-import bupt.liao.fred.socialsearch.mvp.view.adapter.TwitterAdapter;
 import butterknife.BindString;
 import butterknife.BindView;
 import twitter4j.Status;
@@ -89,7 +88,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
 
     @Override
     public TwitterPresenter newP() {
-        return TwitterPresenter.newInstance();
+        return TwitterPresenter.newInstance(getContext());
     }
 
 

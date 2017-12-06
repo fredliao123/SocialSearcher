@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch;
+package bupt.liao.fred.socialsearch.app;
 
 /**
  * Created by Fred.Liao on 2017/12/4.

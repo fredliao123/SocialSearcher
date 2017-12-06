@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import bupt.liao.fred.socialsearch.Conf;
+import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;

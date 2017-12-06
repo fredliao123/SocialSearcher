@@ -9,7 +9,7 @@ import android.view.View;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-import bupt.liao.fred.socialsearch.Conf;
+import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.IViewDelegate;
 import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.ViewDelegateBase;
 import bupt.liao.fred.socialsearch.event.BusProvider;

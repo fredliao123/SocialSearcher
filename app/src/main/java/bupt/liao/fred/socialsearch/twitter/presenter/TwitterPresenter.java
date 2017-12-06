@@ -1,5 +1,6 @@
-package bupt.liao.fred.socialsearch.mvp.presenter;
+package bupt.liao.fred.socialsearch.twitter.presenter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -8,13 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import bupt.liao.fred.socialsearch.BaseApplication;
+import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.mvp.model.network.INetWorkApi;
-import bupt.liao.fred.socialsearch.mvp.model.twitter.ITwitterApi;
-import bupt.liao.fred.socialsearch.mvp.view.adapter.TwitterAdapter;
-import bupt.liao.fred.socialsearch.mvp.view.ui.TwitterFragment;
-import butterknife.BindString;
+import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
+import bupt.liao.fred.socialsearch.twitter.di.DaggerTwitterComponent;
+import bupt.liao.fred.socialsearch.twitter.di.TwitterComponent;
+import bupt.liao.fred.socialsearch.twitter.di.TwitterModule;
+import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
+import bupt.liao.fred.socialsearch.mvp.presenter.BasePresenter;
+import bupt.liao.fred.socialsearch.twitter.view.TwitterAdapter;
+import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -32,8 +36,9 @@ import twitter4j.TwitterException;
  */
 
 public class TwitterPresenter extends BasePresenter<TwitterFragment> {
-
+    TwitterComponent component;
     private String keywords = "";
+    private Context context;
 
     private Subscription subDelayedSearch;
     private Subscription subSearchTweets;
@@ -41,15 +46,15 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
 
     @Inject
     protected ITwitterApi twitterApi;
-    @Inject
-    protected INetWorkApi networkApi;
 
-    public TwitterPresenter(){
-        BaseApplication.getComponent().inject(this);
+    public TwitterPresenter(Context context){
+        this.context = context;
+        component = DaggerTwitterComponent.builder().twitterModule(new TwitterModule()).build();
+        component.inject(this);
     }
 
-    public static TwitterPresenter newInstance() {
-        return new TwitterPresenter();
+    public static TwitterPresenter newInstance(Context context) {
+        return new TwitterPresenter(context);
     }
 
     public void scrollToEnd(final int firstVisibleItemPosition){
@@ -75,7 +80,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                     }
 
                     @Override public void onError(Throwable e) {
-                        if (!networkApi.isConnectedToInternet(BaseApplication.getContext())) {
+                        if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
                             getV().showSnackBar(getV().msgNoInternetConnection);
                             Timber.d("no internet connection");
                         } else {
@@ -96,7 +101,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         safelyUnsubscribe(subDelayedSearch, subLoadMoreTweets, subSearchTweets);
         keywords = keyword;
 
-        if (!networkApi.isConnectedToInternet(BaseApplication.getContext())) {
+        if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
             Timber.d("cannot search tweets - no internet connection");
             getV().showSnackBar(getV().msgNoInternetConnection);
             return;

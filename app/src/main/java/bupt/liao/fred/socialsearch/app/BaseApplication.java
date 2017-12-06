@@ -1,14 +1,12 @@
-package bupt.liao.fred.socialsearch;
+package bupt.liao.fred.socialsearch.app;
 
 import android.app.Application;
 import android.content.Context;
 
-import javax.inject.Singleton;
-
-import bupt.liao.fred.socialsearch.di.ApplicationComponent;
-import bupt.liao.fred.socialsearch.di.DaggerApplicationComponent;
-import bupt.liao.fred.socialsearch.di.module.NetWorkModule;
-import bupt.liao.fred.socialsearch.di.module.TwitterModule;
+import bupt.liao.fred.socialsearch.BuildConfig;
+import bupt.liao.fred.socialsearch.app.di.ApplicationComponent;
+import bupt.liao.fred.socialsearch.app.di.ApplicationModule;
+import bupt.liao.fred.socialsearch.app.di.DaggerApplicationComponent;
 import timber.log.Timber;
 
 /**
@@ -30,8 +28,7 @@ public final class BaseApplication extends Application {
 
     private void buildApplicationComponent() {
         component = DaggerApplicationComponent.builder()
-                .twitterModule(new TwitterModule())
-                .netWorkModule(new NetWorkModule())
+                .applicationModule(new ApplicationModule(this))
                 .build();
     }
 

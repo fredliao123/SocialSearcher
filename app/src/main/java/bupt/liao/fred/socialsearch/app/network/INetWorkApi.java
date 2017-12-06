@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.model.network;
+package bupt.liao.fred.socialsearch.app.network;
 
 import android.content.Context;
 

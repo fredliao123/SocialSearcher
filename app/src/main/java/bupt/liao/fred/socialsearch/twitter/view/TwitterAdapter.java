@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.view.adapter;
+package bupt.liao.fred.socialsearch.twitter.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
 import bupt.liao.fred.socialsearch.mvp.view.adapter.BaseFragmentPagerAdapter;
+import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import butterknife.BindView;
 import timber.log.Timber;
 

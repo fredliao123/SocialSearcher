@@ -1,10 +1,13 @@
-package bupt.liao.fred.socialsearch.mvp.model.network;
+package bupt.liao.fred.socialsearch.app.network;
 
 import android.content.Context;
 
 import com.github.pwittchen.reactivenetwork.library.ConnectivityStatus;
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 
+import javax.inject.Inject;
+
+import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import rx.Observable;
 
 /**
@@ -17,8 +20,9 @@ public final class NetWorkApiImpl implements INetWorkApi {
 
     private ReactiveNetwork reactiveNetwork;
 
-    public NetWorkApiImpl() {
-        this.reactiveNetwork = new ReactiveNetwork();
+    @Inject
+    public NetWorkApiImpl(ReactiveNetwork reactiveNetwork) {
+        this.reactiveNetwork = reactiveNetwork;
     }
 
     @Override

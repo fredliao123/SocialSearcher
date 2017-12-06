@@ -5,13 +5,11 @@ import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.regex.Matcher;
 
 import javax.inject.Singleton;
 
-import bupt.liao.fred.socialsearch.BaseApplication;
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.mvp.view.ui.WebActivity;
 import timber.log.Timber;
@@ -54,7 +51,7 @@ public class StringKit {
         for (String s : urlText) {
             int start = totalString.indexOf(s);
             int end = start + s.length();
-            ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(BaseApplication.getContext().getColor(R.color.colorPrimary));
+            ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(context.getColor(R.color.colorPrimary));
             UrlClickableSpan urlClickableSpan = new UrlClickableSpan(context, s, start, end);
             spanText.setSpan(foregroundColorSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             spanText.setSpan(urlClickableSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);

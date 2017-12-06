@@ -1,10 +1,12 @@
-package bupt.liao.fred.socialsearch.mvp.model.twitter;
+package bupt.liao.fred.socialsearch.twitter.model;
 
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import bupt.liao.fred.socialsearch.BuildConfig;
-import bupt.liao.fred.socialsearch.Conf;
+import bupt.liao.fred.socialsearch.app.Conf;
 import rx.Observable;
 import rx.Subscriber;
 import twitter4j.Query;
@@ -26,22 +28,12 @@ public final class TwitterApiImpl implements ITwitterApi {
     private static final int API_RATE_LIMIT_EXCEEDED_ERROR_CODE = 88;
     private final Twitter twitterInstance;
 
-    public TwitterApiImpl() {
-        final Configuration configuration = createConfiguration();
-        final TwitterFactory twitterFactory = new TwitterFactory(configuration);
-        twitterInstance = twitterFactory.getInstance();
+    @Inject
+    public TwitterApiImpl(Twitter twitter) {
+        twitterInstance = twitter;
     }
 
-    private Configuration createConfiguration() {
-        final ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setDebugEnabled(true)
-                .setOAuthConsumerKey(BuildConfig.TWITTER_CONSUMER_KEY)
-                .setOAuthConsumerSecret(BuildConfig.TWITTER_CONSUMER_SECRET)
-                .setOAuthAccessToken(BuildConfig.TWITTER_ACCESS_TOKEN)
-                .setOAuthAccessTokenSecret(BuildConfig.TWITTER_ACCESS_TOKEN_SECRET);
 
-        return configurationBuilder.build();
-    }
 
     @Override
     public Observable<List<Status>> searchTweets(final String keyword) {

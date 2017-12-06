@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.model.twitter;
+package bupt.liao.fred.socialsearch.twitter.model;
 
 import java.util.List;
 
