@@ -127,9 +127,9 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
 
                     @Override public void onStart() {
                         Timber.d("searching tweets for keyword: %s", keyword);
-                        getV().getRecyclerView().setVisibility(View.GONE);
-                        getV().getPbLoadingTweets().setVisibility(View.VISIBLE);
+                        getV().getStateControllerLayout().showLoading();
                     }
+
 
                     @Override public void onCompleted() {
                         // we don't have to implement this method
@@ -145,8 +145,6 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
 
                     @Override public void onNext(final List<Status> tweets) {
                         Timber.d("search finished");
-                        getV().getRecyclerView().setVisibility(View.VISIBLE);
-                        getV().getPbLoadingTweets().setVisibility(View.GONE);
                         handleSearchResults(tweets, keyword);
                     }
                 });

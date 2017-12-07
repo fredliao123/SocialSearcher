@@ -16,6 +16,7 @@ import java.util.List;
 
 import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
 import butterknife.BindString;
@@ -39,13 +40,10 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     @BindString(R.string.error_during_search) public String msgErrorDuringSearch;
 
     @BindView(R.id.recycler_view_container)
-    RelativeLayout rlRecyclerViewContainer;
+    BaseStateControllerLayout stateControllerLayout;
 
     @BindView(R.id.pb_loading_more_tweets)
     ProgressBar pbLoadMoreTweets;
-
-    @BindView(R.id.pb_loading_tweets)
-    ProgressBar pbLoadingTweets;
 
     @BindView(R.id.recycler_view_tweets)
     RecyclerView recyclerView;
@@ -56,7 +54,12 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     @Override
     public void initData(Bundle savedInstanceState) {
         initRecyclerView();
+        initStateControlerLayout();
+    }
 
+    public void initStateControlerLayout(){
+        stateControllerLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
+        stateControllerLayout.emptyView(View.inflate(context, R.layout.main_activity_welcome_view, null));
     }
 
     private void initRecyclerView() {
@@ -114,7 +117,8 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         final TwitterAdapter adapter = new TwitterAdapter(getContext(), tweets);
         recyclerView.setAdapter(adapter);
         recyclerView.invalidate();
-        recyclerView.setVisibility(View.VISIBLE);
+        //recyclerView.setVisibility(View.VISIBLE);
+        stateControllerLayout.showContent();
         //TODO
         //messageContainerLayout.setVisibility(View.GONE);
         final String message = String.format(msgSearchedFormatted, keyword);
@@ -122,7 +126,8 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     }
 
     public void showErrorMessageContainer(final String message, final int imageResourceId) {
-        //TODO
+        stateControllerLayout.showEmpty();
+
     }
 
     public void searchTweets(String keywords){
@@ -139,9 +144,6 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         getP().safelyUnsubscribeAll();
     }
 
-    public RelativeLayout getRlRecyclerViewContainer() {
-        return rlRecyclerViewContainer;
-    }
 
     public ProgressBar getPbLoadMoreTweets() {
         return pbLoadMoreTweets;
@@ -151,7 +153,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         return recyclerView;
     }
 
-    public ProgressBar getPbLoadingTweets() {
-        return pbLoadingTweets;
+    public BaseStateControllerLayout getStateControllerLayout() {
+        return stateControllerLayout;
     }
 }
