@@ -19,12 +19,16 @@ import twitter4j.conf.ConfigurationBuilder;
 
 @Module
 public final class TwitterModule {
+    private ITwitterApi twitterApi = null;
     @Provides
     @Singleton
     public ITwitterApi provideTwitterApi() {
-        final Configuration configuration = createConfiguration();
-        final TwitterFactory twitterFactory = new TwitterFactory(configuration);
-        return new TwitterApiImpl(twitterFactory.getInstance());
+        if(twitterApi == null) {
+            final Configuration configuration = createConfiguration();
+            final TwitterFactory twitterFactory = new TwitterFactory(configuration);
+            twitterApi = new TwitterApiImpl(twitterFactory.getInstance());
+        }
+        return twitterApi;
     }
 
     private Configuration createConfiguration() {

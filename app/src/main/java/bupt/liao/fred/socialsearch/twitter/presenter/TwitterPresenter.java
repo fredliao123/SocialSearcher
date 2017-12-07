@@ -37,6 +37,7 @@ import twitter4j.TwitterException;
 
 public class TwitterPresenter extends BasePresenter<TwitterFragment> {
     TwitterComponent component;
+
     private String keywords = "";
     private Context context;
 
@@ -46,6 +47,13 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
 
     @Inject
     protected ITwitterApi twitterApi;
+
+    public TwitterComponent getComponent(){
+        if(component == null){
+            component = DaggerTwitterComponent.builder().twitterModule(new TwitterModule()).build();
+        }
+        return component;
+    }
 
     public TwitterPresenter(Context context){
         this.context = context;

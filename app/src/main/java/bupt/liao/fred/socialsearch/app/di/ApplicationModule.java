@@ -2,6 +2,7 @@ package bupt.liao.fred.socialsearch.app.di;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 
@@ -42,6 +43,11 @@ public class ApplicationModule {
     @Provides
     Application provideApplication() {
         return application;
+    }
+
+    @Provides
+    SharedPreferences provideSharedPreferences(){
+        return application.getSharedPreferences("SocialSearch", Context.MODE_PRIVATE);
     }
 
 }

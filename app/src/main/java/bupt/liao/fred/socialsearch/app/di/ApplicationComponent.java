@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.app.annotation.ApplicationContext;
+import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import dagger.Component;
 
@@ -27,4 +28,6 @@ public interface ApplicationComponent {
     Application getApplication();
 
     INetWorkApi getNetWorkApi();
+
+    SharedPrefsHelper getSharedPrefsHelper();
 }

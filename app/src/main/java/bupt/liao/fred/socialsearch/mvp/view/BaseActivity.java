@@ -16,6 +16,8 @@ import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;
 import butterknife.Unbinder;
+import rx.Subscription;
+import timber.log.Timber;
 
 /**
  * Created by Fred.Liao on 2017/12/4.
@@ -133,5 +135,14 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
     @Override
     public void bindEvent() {
 
+    }
+
+    protected void safelyUnsubscribe(final Subscription... subscriptions) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription != null && !subscription.isUnsubscribed()) {
+                subscription.unsubscribe();
+                Timber.d("subscription %s unsubscribed", subscription.toString());
+            }
+        }
     }
 }

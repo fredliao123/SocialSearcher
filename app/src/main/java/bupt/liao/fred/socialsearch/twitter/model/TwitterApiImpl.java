@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import bupt.liao.fred.socialsearch.BuildConfig;
 import bupt.liao.fred.socialsearch.app.Conf;
 import rx.Observable;
 import rx.Subscriber;
@@ -14,9 +13,6 @@ import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by Fred.Liao on 2017/12/5.
