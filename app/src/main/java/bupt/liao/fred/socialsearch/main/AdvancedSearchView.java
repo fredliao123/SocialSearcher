@@ -27,6 +27,12 @@ import timber.log.Timber;
 public class AdvancedSearchView extends MaterialSearchView {
     private View searchLayout;
     private View searchHintView;
+    private View searchForView;
+    private TextView searchForVideo;
+    private TextView searchForNear;
+    private TextView searchForUntil;
+    private View mTintView;
+    private LinearLayout searchTopBarContainer;
     private RelativeLayout searchTopBar;
     private ImageView cancelHint;
     private TextView hintText;
@@ -52,6 +58,20 @@ public class AdvancedSearchView extends MaterialSearchView {
         this.context = context;
         searchLayout = findViewById(R.id.search_layout);
         searchTopBar = (RelativeLayout) searchLayout.findViewById(R.id.search_top_bar);
+        mTintView = findViewById(R.id.transparent_view);
+        mTintView.setBackgroundColor(context.getResources().getColor(R.color.tint_view_color));
+
+        searchTopBarContainer = (LinearLayout) searchTopBar.getParent();
+        searchForView = LayoutInflater.from(context).inflate(R.layout.search_options, null);
+        searchForVideo = searchForView.findViewById(R.id.saerch_for_video);
+        searchForNear = searchForView.findViewById(R.id.saerch_for_near);
+        searchForUntil = searchForView.findViewById(R.id.saerch_for_until);
+        searchForNear.setOnClickListener(searchForOnClickListener);
+        searchForVideo.setOnClickListener(searchForOnClickListener);
+        searchForUntil.setOnClickListener(searchForOnClickListener);
+
+        searchForUntil = searchForView.findViewById(R.id.saerch_for_until);
+        searchTopBarContainer.addView(searchForView);
 
         searchHintView = LayoutInflater.from(context).inflate(R.layout.search_view_hint, null);
         hintText = searchHintView.findViewById(R.id.search_hint_text);
@@ -88,6 +108,25 @@ public class AdvancedSearchView extends MaterialSearchView {
 
     public void setHintText(String text){
         hintText.setText(text);
+    }
+
+    private final OnClickListener searchForOnClickListener = new OnClickListener() {
+
+        public void onClick(View v) {
+            if (v == searchForVideo) {
+                Timber.d("Search for video");
+            } else if (v == searchForNear) {
+                Timber.d("search for near");
+            } else if (v == searchForUntil) {
+                Timber.d("search for until");
+            }
+        }
+    };
+
+    @Override
+    public void setSuggestions(String[] suggestions){
+        super.setSuggestions(suggestions);
+        mTintView.setVisibility(GONE);
     }
 
 //    @Override

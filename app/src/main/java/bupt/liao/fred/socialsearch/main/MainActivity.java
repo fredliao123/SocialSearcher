@@ -30,7 +30,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity implements MaterialSearchView.SearchViewListener{
+public class MainActivity extends BaseActivity {
     private static String HISTORY_KEY = "history";
 
     @BindView(R.id.toolbar)
@@ -66,14 +66,13 @@ public class MainActivity extends BaseActivity implements MaterialSearchView.Sea
         initHistorySet();
         fragmentList.clear();
         fragmentList.add(TwitterFragment.newInstance());
-        fragmentList.add(FlickrFragment.newInstance());
 
 
         if (adapter == null) {
             adapter = new BaseFragmentPagerAdapter(getSupportFragmentManager(), fragmentList, titles);
         }
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(2);
+        viewPager.setOffscreenPageLimit(1);
 
         tabLayout.setupWithViewPager(viewPager);
         showWelcomeView();
@@ -112,7 +111,6 @@ public class MainActivity extends BaseActivity implements MaterialSearchView.Sea
     }
 
     private void initSearchView() {
-        searchView.setOnSearchViewListener(this);
         searchView.setVoiceSearch(false);
         searchView.setCursorDrawable(R.drawable.search_view_cursor);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
@@ -122,7 +120,6 @@ public class MainActivity extends BaseActivity implements MaterialSearchView.Sea
                 historySuggestions.add(query);
                 searchView.setSuggestions(historySuggestions.toArray(new String[historySuggestions.size()]));
                 if (fragmentList.get(0) instanceof TwitterFragment) {
-                    //showViewPager();
                     ((TwitterFragment) fragmentList.get(0)).searchTweets(query);
                 }
                 return false;
@@ -130,10 +127,7 @@ public class MainActivity extends BaseActivity implements MaterialSearchView.Sea
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (fragmentList.get(0) instanceof TwitterFragment) {
-                    //showViewPager();
-                    ((TwitterFragment) fragmentList.get(0)).searchTweetsWithDelay(newText);
-                }
+                welcomeContainer.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -178,23 +172,9 @@ public class MainActivity extends BaseActivity implements MaterialSearchView.Sea
         return null;
     }
 
-    public void showWelcomeView(){
+    public void showWelcomeView() {
         welcomeContainer.setVisibility(View.VISIBLE);
-        viewpagerContainer.setVisibility(View.INVISIBLE);
-    }
-
-    public void showViewPager(){
-        welcomeContainer.setVisibility(View.GONE);
         viewpagerContainer.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onSearchViewShown() {
-        showViewPager();
-    }
-
-    @Override
-    public void onSearchViewClosed() {
-
-    }
 }

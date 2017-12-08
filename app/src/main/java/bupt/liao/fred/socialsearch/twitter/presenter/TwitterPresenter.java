@@ -90,6 +90,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                     @Override public void onError(Throwable e) {
                         if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
                             getV().showSnackBar(getV().msgNoInternetConnection);
+                            getV().getStateControllerLayout().showError();
                             Timber.d("no internet connection");
                         } else {
                             getV().showSnackBar(getV().msgCannotLoadMoreTweets);
@@ -111,11 +112,13 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
 
         if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
             Timber.d("cannot search tweets - no internet connection");
+            getV().getStateControllerLayout().showError();
             getV().showSnackBar(getV().msgNoInternetConnection);
             return;
         }
 
         if (!twitterApi.canSearchTweets(keyword)) {
+            getV().getStateControllerLayout().showError();
             Timber.d("cannot search tweets - invalid keyword: %s", keyword);
             return;
         }
@@ -139,34 +142,13 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                     @Override public void onError(final Throwable e) {
                         final String message = getErrorMessage((TwitterException) e);
                         getV().showSnackBar(message);
-                        getV().showErrorMessageContainer(message, R.drawable.no_tweets);
+                        getV().getStateControllerLayout().showError();
                         Timber.d("error during search: %s", message);
                     }
 
                     @Override public void onNext(final List<Status> tweets) {
                         Timber.d("search finished");
                         handleSearchResults(tweets, keyword);
-                    }
-                });
-    }
-
-    public void searchTweetsWithDelay(final String keyword) {
-        Timber.d("starting delayed search");
-        safelyUnsubscribe(subDelayedSearch);
-
-        if (!twitterApi.canSearchTweets(keyword)) {
-            Timber.d("cannot search tweets keyword %s is invalid", keyword);
-            return;
-        }
-
-        // we are creating this delay to let user provide keyword
-        // and omit not necessary requests
-        subDelayedSearch = Observable.timer(1, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Long>() {
-                    @Override public void call(Long milliseconds) {
-                        searchTweets(keyword);
                     }
                 });
     }
@@ -198,7 +180,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
             Timber.d("no tweets");
             final String message = String.format(getV().msgNoTweetsFormatted, keyword);
             getV().showSnackBar(message);
-            getV().showErrorMessageContainer(message, R.drawable.no_tweets);
+            getV().getStateControllerLayout().showEmpty();
             return;
         }
 

@@ -16,6 +16,7 @@ import java.util.List;
 
 import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.main.MainActivity;
 import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
@@ -57,8 +58,10 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         initStateControlerLayout();
     }
 
+    //TODO
     public void initStateControlerLayout(){
         stateControllerLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
+        stateControllerLayout.errorView(View.inflate(context, R.layout.main_activity_welcome_view, null));
         stateControllerLayout.emptyView(View.inflate(context, R.layout.main_activity_welcome_view, null));
     }
 
@@ -117,26 +120,16 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         final TwitterAdapter adapter = new TwitterAdapter(getContext(), tweets);
         recyclerView.setAdapter(adapter);
         recyclerView.invalidate();
-        //recyclerView.setVisibility(View.VISIBLE);
         stateControllerLayout.showContent();
-        //TODO
-        //messageContainerLayout.setVisibility(View.GONE);
         final String message = String.format(msgSearchedFormatted, keyword);
         showSnackBar(message);
     }
 
-    public void showErrorMessageContainer(final String message, final int imageResourceId) {
-        stateControllerLayout.showEmpty();
-
-    }
 
     public void searchTweets(String keywords){
         getP().searchTweets(keywords);
     }
 
-    public void searchTweetsWithDelay(String keywords){
-        getP().searchTweetsWithDelay(keywords);
-    }
 
     @Override
     public void onDetach(){
