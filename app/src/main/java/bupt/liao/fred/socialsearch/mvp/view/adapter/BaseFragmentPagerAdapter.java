@@ -10,7 +10,8 @@ import java.util.List;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:BaseFragmentPagerAdapter based on FragmentPagerAdapter
+ * Added title to each page
  */
 
 public class BaseFragmentPagerAdapter extends FragmentPagerAdapter {

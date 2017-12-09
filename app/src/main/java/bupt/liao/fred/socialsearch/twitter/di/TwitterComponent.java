@@ -2,6 +2,7 @@ package bupt.liao.fred.socialsearch.twitter.di;
 
 import javax.inject.Singleton;
 
+import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
 import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import dagger.Component;
@@ -18,4 +19,6 @@ public interface TwitterComponent {
     void inject(TwitterPresenter presenter);
 
     ITwitterApi getTwitterApi();
+
+    GPSmanager getGPSmanager();
 }

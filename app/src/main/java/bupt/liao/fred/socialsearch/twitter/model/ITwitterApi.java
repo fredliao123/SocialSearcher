@@ -16,6 +16,14 @@ public interface ITwitterApi {
 
     Observable<List<Status>> searchTweets(final String keyword, final long maxTweetId);
 
+    Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude);
+
+    Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude, final long maxTweetId);
+
+    Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date);
+
+    Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date, final long maxTweetId);
+
     int getApiRateLimitExceededErrorCode();
 
 

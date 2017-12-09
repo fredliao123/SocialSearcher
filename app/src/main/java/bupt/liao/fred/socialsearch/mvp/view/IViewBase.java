@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Interface for views using MVP model
  */
 
 public interface IViewBase<P> extends IView<P>{

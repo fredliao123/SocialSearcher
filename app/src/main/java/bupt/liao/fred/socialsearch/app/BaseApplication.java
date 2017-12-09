@@ -12,7 +12,7 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:Application of the App
  */
 
 public final class BaseApplication extends Application {
@@ -26,12 +26,18 @@ public final class BaseApplication extends Application {
         context = getApplicationContext();
     }
 
+    /**
+     * Init DI, provide Application Component for other object to use
+     */
     private void buildApplicationComponent() {
         component = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .build();
     }
 
+    /**
+     * For log
+     */
     private void plantLoggingTree() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
@@ -50,7 +56,7 @@ public final class BaseApplication extends Application {
 
     private static class CrashReportingTree extends Timber.Tree {
         @Override protected void log(int priority, String tag, String message, Throwable t) {
-            // implement crash reporting with Crashlytics, Bugsnag or whatever if necessary
+            // implement crash reporting here
         }
     }
 }

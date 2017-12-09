@@ -10,7 +10,7 @@ import bupt.liao.fred.socialsearch.mvp.view.IView;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: BasePresenter using MVP model
  */
 
 public abstract class BasePresenter <V extends IView> implements IPresenter<V> {

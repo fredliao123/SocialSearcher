@@ -10,7 +10,7 @@ import butterknife.Unbinder;
 /**
  * Created by Fred.Liao on 2017/12/4.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Bind object using butterknife.
  */
 
 public class KnifeKit {

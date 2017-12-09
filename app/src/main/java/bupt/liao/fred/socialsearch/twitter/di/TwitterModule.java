@@ -1,12 +1,16 @@
 package bupt.liao.fred.socialsearch.twitter.di;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.BuildConfig;
+import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
 import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
 import bupt.liao.fred.socialsearch.twitter.model.TwitterApiImpl;
 import dagger.Module;
 import dagger.Provides;
+import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -20,6 +24,12 @@ import twitter4j.conf.ConfigurationBuilder;
 @Module
 public final class TwitterModule {
     private ITwitterApi twitterApi = null;
+    private Context context;
+
+    public TwitterModule(Context context){
+        this.context = context;
+    }
+
     @Provides
     @Singleton
     public ITwitterApi provideTwitterApi() {
@@ -40,5 +50,12 @@ public final class TwitterModule {
                 .setOAuthAccessTokenSecret(BuildConfig.TWITTER_ACCESS_TOKEN_SECRET);
 
         return configurationBuilder.build();
+    }
+
+
+    @Provides
+    @Singleton
+    GPSmanager provideGPSmanager(){
+        return new GPSmanager(context);
     }
 }

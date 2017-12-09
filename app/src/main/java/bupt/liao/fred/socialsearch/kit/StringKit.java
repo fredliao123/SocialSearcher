@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Patterns;
@@ -24,16 +23,22 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/6.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: A kit include string related operations.
  */
 
 public class StringKit {
 
     @Singleton
-    public static StringKit getInstance(){
+    public static StringKit getInstance() {
         return new StringKit();
     }
 
+    /**
+     * Extract web url from a string
+     *
+     * @param text
+     * @return
+     */
     public String[] extractLinks(String text) {
         List<String> links = new ArrayList<String>();
         Matcher m = Patterns.WEB_URL.matcher(text);
@@ -46,49 +51,53 @@ public class StringKit {
         return links.toArray(new String[links.size()]);
     }
 
+    /**
+     * Change the color of the urls in a string and made the url clickable
+     *
+     * @param context
+     * @param urlText     all the urls in the string
+     * @param totalString the string to be changed
+     * @return
+     */
     public Spannable getSpanText(@NonNull Context context, @NonNull String[] urlText, @NonNull String totalString) {
         Spannable spanText = new SpannableString(totalString);
         for (String s : urlText) {
+            //Decide the start index and end index of a given url
             int start = totalString.indexOf(s);
             int end = start + s.length();
+            //Set color
             ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(context.getColor(R.color.colorPrimary));
+            //Set click event
             UrlClickableSpan urlClickableSpan = new UrlClickableSpan(context, s, start, end);
             spanText.setSpan(foregroundColorSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             spanText.setSpan(urlClickableSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
         }
-        return  spanText;
+        return spanText;
     }
 
+    /**
+     * The click event of a url in a string
+     */
     class UrlClickableSpan extends ClickableSpan {
         String url = "";
         int start = 0;
-        int end  = 0;
+        int end = 0;
         Context context;
-        public UrlClickableSpan(Context context, String string, int start, int end)
-        {
+
+        public UrlClickableSpan(Context context, String string, int start, int end) {
             super();
             url = string;
             this.start = start;
             this.end = end;
             this.context = context;
         }
-        public void onClick(View tv)
-        {
-            if(tv instanceof TextView) {
+
+        public void onClick(View tv) {
+            if (tv instanceof TextView) {
                 Timber.d("StringKit: url clicked " + url);
-                WebActivity.launch(context, url ,"");
-//                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(BaseApplication.getContext().getColor(R.color.colorAccent));
-//                Spannable spanText = (Spannable) ((TextView) tv).getText();
-//                spanText.setSpan(foregroundColorSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-//                ((TextView) tv).setText(spanText);
-//                ((TextView)tv).setMovementMethod(LinkMovementMethod.getInstance ());
+                WebActivity.launch(context, url, "");
             }
-        }
-        public void updateDrawState(TextPaint ds)
-        {
-            //ds.setColor(BaseApplication.getContext().getColor(R.color.colorAccent));//set text color
-            //ds.setUnderlineText(true); // set to false to remove underline
         }
     }
 }

@@ -23,7 +23,7 @@ import butterknife.BindView;
 /**
  * Created by Fred.Liao on 2017/12/6.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:WebActivity for links in tweets
  */
 
 public class WebActivity extends BaseActivity{

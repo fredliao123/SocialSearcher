@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.app.annotation.ApplicationContext;
+import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
 import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import dagger.Component;
@@ -14,7 +15,7 @@ import dagger.Component;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Component for the Application
  */
 
 @Singleton
@@ -30,4 +31,5 @@ public interface ApplicationComponent {
     INetWorkApi getNetWorkApi();
 
     SharedPrefsHelper getSharedPrefsHelper();
+
 }

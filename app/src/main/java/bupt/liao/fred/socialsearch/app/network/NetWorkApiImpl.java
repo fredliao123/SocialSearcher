@@ -13,7 +13,7 @@ import rx.Observable;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:The implementation of the INetWorkApi
  */
 
 public final class NetWorkApiImpl implements INetWorkApi {
@@ -25,6 +25,11 @@ public final class NetWorkApiImpl implements INetWorkApi {
         this.reactiveNetwork = reactiveNetwork;
     }
 
+    /**
+     * Check internet connection
+     * @param context
+     * @return if the internet is connected
+     */
     @Override
     public boolean isConnectedToInternet(Context context) {
         final ConnectivityStatus status = reactiveNetwork.getConnectivityStatus(context, true);
@@ -33,6 +38,11 @@ public final class NetWorkApiImpl implements INetWorkApi {
         return connectedToWifi || connectedToMobile;
     }
 
+    /**
+     * Observe the connection of internet. inform observer when internet status changed
+     * @param context
+     * @return
+     */
     @Override
     public Observable<ConnectivityStatus> observeConnectivity(Context context) {
         return new ReactiveNetwork().enableInternetCheck().observeConnectivity(context);

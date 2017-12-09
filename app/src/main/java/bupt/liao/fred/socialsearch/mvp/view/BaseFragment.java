@@ -4,19 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import bupt.liao.fred.socialsearch.app.Conf;
+import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;
-import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.IViewDelegate;
-import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.ViewDelegateBase;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
@@ -28,16 +26,11 @@ import timber.log.Timber;
 
 public abstract class BaseFragment <P extends IPresenter> extends RxFragment implements IViewBase<P> {
 
-    private IViewDelegate vDelegate;
     private P p;
     protected Activity context;
     private View rootView;
     protected LayoutInflater layoutInflater;
-
-    private RxPermissions rxPermissions;
-
     private Unbinder unbinder;
-
 
     @Nullable
     @Override
@@ -76,12 +69,7 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         unbinder = KnifeKit.bind(this, rootView);
     }
 
-    protected IViewDelegate getvDelegate() {
-        if (vDelegate == null) {
-            vDelegate = ViewDelegateBase.create(context);
-        }
-        return vDelegate;
-    }
+
 
     protected P getP() {
         if (p == null) {
@@ -112,7 +100,6 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         return false;
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -122,16 +109,7 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         if (getP() != null) {
             getP().detachV();
         }
-        getvDelegate().destory();
-
         p = null;
-        vDelegate = null;
-    }
-
-    protected RxPermissions getRxPermissions() {
-        rxPermissions = new RxPermissions(getActivity());
-        rxPermissions.setLogging(Conf.DEV);
-        return rxPermissions;
     }
 
     @Override
@@ -142,5 +120,10 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
     @Override
     public void bindEvent() {
 
+    }
+
+    public void showSnackBar(final String message) {
+        final View containerId = getActivity().findViewById(R.id.container);
+        Snackbar.make(containerId, message, Snackbar.LENGTH_LONG).show();
     }
 }

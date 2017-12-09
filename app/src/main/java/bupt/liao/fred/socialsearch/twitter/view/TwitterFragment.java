@@ -98,11 +98,6 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     }
 
 
-    public void showSnackBar(final String message) {
-        final View containerId = getActivity().findViewById(R.id.container);
-        Snackbar.make(containerId, message, Snackbar.LENGTH_LONG).show();
-    }
-
     @NonNull
     public void createNewTweetsAdapterAndRefresh(List<Status> newTweets, int position) {
         final TwitterAdapter adapter = (TwitterAdapter) recyclerView.getAdapter();
@@ -136,7 +131,6 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         super.onDetach();
         getP().safelyUnsubscribeAll();
     }
-
 
     public ProgressBar getPbLoadMoreTweets() {
         return pbLoadMoreTweets;

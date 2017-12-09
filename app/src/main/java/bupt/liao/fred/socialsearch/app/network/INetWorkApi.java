@@ -9,7 +9,7 @@ import rx.Observable;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Api interface for Network, main function is to check internet connection.
  */
 
 public interface INetWorkApi {

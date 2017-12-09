@@ -3,15 +3,13 @@ package bupt.liao.fred.socialsearch.mvp.view;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.View;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-import bupt.liao.fred.socialsearch.app.Conf;
-import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.IViewDelegate;
-import bupt.liao.fred.socialsearch.mvp.view.viewdelegate.ViewDelegateBase;
+import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;
@@ -22,16 +20,13 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/4.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:BaseActivity using MVP model
  */
 
 public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatActivity implements IViewBase<P> {
 
-    private IViewDelegate vDelegate;
     private P p;
     protected Activity context;
-
-    private RxPermissions rxPermissions;
 
     private Unbinder unbinder;
 
@@ -53,13 +48,6 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
     @Override
     public void bindUI(View rootView) {
         unbinder = KnifeKit.bind(this);
-    }
-
-    protected IViewDelegate getvDelegate() {
-        if (vDelegate == null) {
-            vDelegate = ViewDelegateBase.create(context);
-        }
-        return vDelegate;
     }
 
     protected P getP() {
@@ -84,14 +72,12 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
     @Override
     protected void onResume() {
         super.onResume();
-        getvDelegate().resume();
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        getvDelegate().pause();
     }
 
     @Override
@@ -108,9 +94,7 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
         if (getP() != null) {
             getP().detachV();
         }
-        getvDelegate().destory();
         p = null;
-        vDelegate = null;
     }
 
     @Override
@@ -119,12 +103,6 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
             getMenuInflater().inflate(getOptionsMenuId(), menu);
         }
         return super.onCreateOptionsMenu(menu);
-    }
-
-    protected RxPermissions getRxPermissions() {
-        rxPermissions = new RxPermissions(this);
-        rxPermissions.setLogging(Conf.DEV);
-        return rxPermissions;
     }
 
     @Override
@@ -137,12 +115,10 @@ public abstract class BaseActivity <P extends IPresenter> extends RxAppCompatAct
 
     }
 
-    protected void safelyUnsubscribe(final Subscription... subscriptions) {
-        for (Subscription subscription : subscriptions) {
-            if (subscription != null && !subscription.isUnsubscribed()) {
-                subscription.unsubscribe();
-                Timber.d("subscription %s unsubscribed", subscription.toString());
-            }
-        }
+    public void showSnackBar(final String message) {
+        final View containerId = context.findViewById(R.id.container);
+        Snackbar.make(containerId, message, Snackbar.LENGTH_LONG).show();
     }
+
+
 }

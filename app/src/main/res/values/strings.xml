@@ -10,5 +10,10 @@
     <string name="search_for_hint">Search for</string>
     <string name="search_for_video">Video</string>
     <string name="search_for_near">Near</string>
-    <string name="search_for_util">Util</string>
+    <string name="search_for_util">Until</string>
+
+    <!--    Permissions    -->
+    <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'Near Search\' feature, which searches tweets near you.</string>
+    <string name="location_permission_denied">This sample requires location permission to enable the \'Near Search\' feature. Please try again and grant access to use this feature.</string>
+    <string name="permission_required_toast">Location permission is required for this app.</string>
 </resources>

@@ -14,7 +14,7 @@ import rx.Subscriber;
 /**
  * Created by Fred.Liao on 2017/12/7.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:A class that use SharedPreference API to save and get data.
  */
 
 @Singleton
@@ -73,6 +73,11 @@ public class SharedPrefsHelper {
         mSharedPreferences.edit().remove(key).apply();
     }
 
+    /**
+     * Get String set asynchronously
+     * @param key
+     * @return
+     */
     public Observable<Set<String>> getStringSet(final String key){
         return Observable.create(new Observable.OnSubscribe<Set<String>>(){
             @Override
@@ -83,6 +88,12 @@ public class SharedPrefsHelper {
         });
     }
 
+    /**
+     * Put String set asynchronously
+     * @param key
+     * @param set
+     * @return
+     */
     public Observable putStringSet(final String key, final Set<String> set){
         return Observable.create(new Observable.OnSubscribe(){
             @Override

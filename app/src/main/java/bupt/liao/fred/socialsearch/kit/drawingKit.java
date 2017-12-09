@@ -7,7 +7,7 @@ import android.util.DisplayMetrics;
 /**
  * Created by Fred.Liao on 2017/12/7.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: provide method convert dp to pixels and pixels to dp.
  */
 
 public class drawingKit {

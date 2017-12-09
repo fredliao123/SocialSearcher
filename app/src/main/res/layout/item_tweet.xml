@@ -66,5 +66,4 @@
         android:textSize="@dimen/tweet_item_message_text"
         android:text="tweet message"
         />
-
 </RelativeLayout>

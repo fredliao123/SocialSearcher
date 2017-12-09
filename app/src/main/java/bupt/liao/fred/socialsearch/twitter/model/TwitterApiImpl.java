@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import bupt.liao.fred.socialsearch.app.Conf;
 import rx.Observable;
 import rx.Subscriber;
+import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -28,7 +29,6 @@ public final class TwitterApiImpl implements ITwitterApi {
     public TwitterApiImpl(Twitter twitter) {
         twitterInstance = twitter;
     }
-
 
 
     @Override
@@ -55,6 +55,80 @@ public final class TwitterApiImpl implements ITwitterApi {
             public void call(Subscriber<? super List<Status>> subscriber) {
                 try {
                     final Query query = new Query(keyword).maxId(maxTweetId).count(Conf.MAX_TWEET_PER_REQUEST);
+                    final QueryResult result = twitterInstance.search(query);
+                    subscriber.onNext(result.getTweets());
+                    subscriber.onCompleted();
+                } catch (TwitterException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude) {
+        final GeoLocation geoLocation = new GeoLocation(latitude, longitude);
+        return Observable.create(new Observable.OnSubscribe<List<Status>>() {
+            @Override
+            public void call(Subscriber<? super List<Status>> subscriber) {
+                try {
+                    final Query query = new Query(keyword).count(Conf.MAX_TWEET_PER_REQUEST);
+                    query.setGeoCode(geoLocation, 100, Query.MILES);
+                    final QueryResult result = twitterInstance.search(query);
+                    subscriber.onNext(result.getTweets());
+                    subscriber.onCompleted();
+                } catch (TwitterException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude, final long maxTweetId) {
+        final GeoLocation geoLocation = new GeoLocation(latitude, longitude);
+        return Observable.create(new Observable.OnSubscribe<List<Status>>() {
+            @Override
+            public void call(Subscriber<? super List<Status>> subscriber) {
+                try {
+                    final Query query = new Query(keyword).maxId(maxTweetId).count(Conf.MAX_TWEET_PER_REQUEST);
+                    query.setGeoCode(geoLocation, 100, Query.MILES);
+                    final QueryResult result = twitterInstance.search(query);
+                    subscriber.onNext(result.getTweets());
+                    subscriber.onCompleted();
+                } catch (TwitterException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date) {
+        return Observable.create(new Observable.OnSubscribe<List<Status>>() {
+            @Override
+            public void call(Subscriber<? super List<Status>> subscriber) {
+                try {
+                    final Query query = new Query(keyword).count(Conf.MAX_TWEET_PER_REQUEST);
+                    query.setUntil(date);
+                    final QueryResult result = twitterInstance.search(query);
+                    subscriber.onNext(result.getTweets());
+                    subscriber.onCompleted();
+                } catch (TwitterException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date, final long maxTweetId) {
+        return Observable.create(new Observable.OnSubscribe<List<Status>>() {
+            @Override
+            public void call(Subscriber<? super List<Status>> subscriber) {
+                try {
+                    final Query query = new Query(keyword).maxId(maxTweetId).count(Conf.MAX_TWEET_PER_REQUEST);
+                    query.setUntil(date);
                     final QueryResult result = twitterInstance.search(query);
                     subscriber.onNext(result.getTweets());
                     subscriber.onCompleted();
