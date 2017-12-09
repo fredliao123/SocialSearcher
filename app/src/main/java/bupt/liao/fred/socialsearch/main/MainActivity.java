@@ -15,12 +15,13 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
 import bupt.liao.fred.socialsearch.mvp.view.adapter.BaseFragmentPagerAdapter;
 import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
-import butterknife.BindString;
 import butterknife.BindView;
 import timber.log.Timber;
 
@@ -58,7 +59,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     List<Fragment> fragmentList = new ArrayList<>();
     String[] titles = {"Twitter"};
     BaseFragmentPagerAdapter adapter;
-
+    /**
+     * This set can only be in Activity,but not hold by presenter,because
+     * when onDestroy be called ,the presenter has already be recycled. a new set will be saved.
+     */
+    Set<String> historySuggestions;
 
     @Override
     public void initData(Bundle savedInstanceState) {
@@ -87,8 +92,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 Timber.d("pressed search icon");
-                getP().getHistorySuggestions().add(query);
-                searchView.setSuggestions(getP().getHistorySuggestions().toArray(new String[getP().getHistorySuggestions().size()]));
+                historySuggestions.add(query);
+                searchView.setSuggestions(historySuggestions.toArray(new String[historySuggestions.size()]));
                 if (fragmentList.get(0) instanceof TwitterFragment) {
                     ((TwitterFragment) fragmentList.get(0)).searchTweets(query);
                 }
@@ -163,7 +168,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getP().saveHistorySet();
+        BaseApplication
+                .getComponent()
+                .getSharedPrefsHelper()
+                .putStringSet(getP().HISTORY_KEY, historySuggestions);
     }
 
     @Override
@@ -207,5 +215,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         getP().onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public Set<String> getHistorySuggestions() {
+        return historySuggestions;
+    }
+
+    public void setHistorySuggestions(Set<String> historySuggestions) {
+        this.historySuggestions = historySuggestions;
     }
 }

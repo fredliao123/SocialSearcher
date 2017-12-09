@@ -9,6 +9,8 @@ import android.support.v4.content.ContextCompat;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.kit.PermissionKit;
 import bupt.liao.fred.socialsearch.mvp.presenter.BasePresenter;
@@ -32,8 +34,7 @@ public class MainPresenter extends BasePresenter<MainActivity> {
      * For search history
      * Key for get saved search history from sharedpreference
      */
-    private static String HISTORY_KEY = "history";
-    Set<String> historySuggestions = new HashSet<>();
+    public static String HISTORY_KEY = "history";
     Subscription subGetHistorySet;
     Subscription subSaveHistorySet;
 
@@ -46,6 +47,7 @@ public class MainPresenter extends BasePresenter<MainActivity> {
         this.context = context;
     }
 
+    @Singleton
     public static MainPresenter newInstance(Context context) {
         return new MainPresenter(context);
     }
@@ -70,26 +72,12 @@ public class MainPresenter extends BasePresenter<MainActivity> {
 
                     @Override
                     public void onNext(Set<String> set) {
-                        historySuggestions = set;
-                        String[] suggestions = historySuggestions.toArray(new String[historySuggestions.size()]);
+                        getV().setHistorySuggestions(set);
+                        String[] suggestions = getV().getHistorySuggestions().toArray(new String[getV().getHistorySuggestions().size()]);
                         getV().searchView.setSuggestions(suggestions);
                         getV().searchView.showSuggestions();
                     }
                 });
-    }
-
-    public void saveHistorySet() {
-        safelyUnsubscribe(subSaveHistorySet);
-        //Save search history
-        //TODO something wrong with search history
-        subSaveHistorySet = BaseApplication
-                .getComponent()
-                .getSharedPrefsHelper()
-                .putStringSet(HISTORY_KEY, historySuggestions)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-        safelyUnsubscribe(subGetHistorySet, subSaveHistorySet);
     }
 
     private void safelyUnsubscribe(final Subscription... subscriptions) {
@@ -131,9 +119,6 @@ public class MainPresenter extends BasePresenter<MainActivity> {
         }
     }
 
-    public Set<String> getHistorySuggestions() {
-        return historySuggestions;
-    }
 
     public boolean ismPermissionDenied() {
         return mPermissionDenied;
