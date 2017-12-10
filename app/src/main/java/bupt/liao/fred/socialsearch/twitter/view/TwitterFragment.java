@@ -61,8 +61,8 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     //TODO
     public void initStateControlerLayout(){
         stateControllerLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
-        stateControllerLayout.errorView(View.inflate(context, R.layout.main_activity_welcome_view, null));
-        stateControllerLayout.emptyView(View.inflate(context, R.layout.main_activity_welcome_view, null));
+        stateControllerLayout.errorView(View.inflate(context, R.layout.view_error, null));
+        stateControllerLayout.emptyView(View.inflate(context, R.layout.view_empty, null));
     }
 
     private void initRecyclerView() {

@@ -1,13 +1,11 @@
 package bupt.liao.fred.socialsearch.mvp.view.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
@@ -16,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
 import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
 import butterknife.BindView;
@@ -53,11 +52,21 @@ public class WebActivity extends BaseActivity{
         initToolbar();
         initContentLayout();
         initRefreshLayout();
-        initWebView();
+        if(checkInternet()) {
+            initWebView();
+        }else{
+            contentLayout.showError();
+        }
+
     }
 
     private void initContentLayout() {
         contentLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
+        contentLayout.errorView(View.inflate(context,R.layout.view_error, null));
+    }
+
+    private boolean checkInternet(){
+        return BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context);
     }
 
     private void initRefreshLayout() {
@@ -105,6 +114,14 @@ public class WebActivity extends BaseActivity{
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 

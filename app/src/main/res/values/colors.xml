@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#1565c0</color>
+    <color name="colorPrimaryDark">#003c8f</color>
+    <color name="colorLight">#5e92f3</color>
+    <color name="colorAccent">#2196f3</color>
     <color name="colorTweetDate">#4f0b0606</color>
     <color name="text_color_gray">#515151</color>
     <color name="white">#FFFFFF</color>

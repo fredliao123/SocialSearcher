@@ -51,6 +51,8 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
     public volatile static boolean SEARCH_NEAR = false;
     public volatile static String UNITL_DATE = null;
 
+    private static final String VIDEO_FILTER = " filter:vine";
+
     public static void searchForVideo() {
         SEARCH_VIDEO = true;
         SEARCH_UNTIL = false;
@@ -165,7 +167,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         }
 
         if (SEARCH_VIDEO) {
-            keywords = keywords + " filter:vine";
+            keywords = keywords + VIDEO_FILTER;
             Timber.d("Search for video, keyword is " + keywords);
             subSearchTweets = twitterApi.searchTweets(keywords)
                     .subscribeOn(Schedulers.io())
@@ -294,13 +296,28 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         Timber.d("handling search results");
         if (tweets.isEmpty()) {
             Timber.d("no tweets");
-            final String message = String.format(getV().msgNoTweetsFormatted, keyword);
+            final String message = String.format(getV().msgNoTweetsFormatted, handleKeyWordsInDifferentCategory(keyword));
             getV().showSnackBar(message);
             getV().getStateControllerLayout().showEmpty();
             return;
         }
 
         Timber.d("passing search results to view");
-        getV().showSearchResult(tweets, keyword);
+        getV().showSearchResult(tweets, handleKeyWordsInDifferentCategory(keyword));
+
+
+    }
+
+    private String handleKeyWordsInDifferentCategory(String keyword){
+        if(SEARCH_VIDEO){
+            int index = keyword.indexOf(VIDEO_FILTER);
+            return new String(keyword.substring(0, index) + " with video");
+        }else if(SEARCH_NEAR){
+            return new String(keyword + " tweeted near you");
+        }else if(SEARCH_UNTIL){
+            return new String(keyword + " until "+ UNITL_DATE);
+        }else{
+            return keyword;
+        }
     }
 }
