@@ -98,17 +98,18 @@ Clone the project and sync and build in Android Studio. The Key and Token for Tw
 
 -------------------------------------------------------------------------------------------
 ## Reference
-When working on this project, I refered to some code from project [SearchTwitter](https://github.com/pwittchen/SearchTwitter) for saving time. 
+When working on this project, I refered to some code from project [SearchTwitter](https://github.com/pwittchen/SearchTwitter) for saving time.  
 I largely reconstructed the code and added more features.
 
 -----------------------------------------------------------------------------------------
 ## Others
 ### Stuff I learn during working on the project
-* When I was working on the project, I find a bug that the fragments get a null context when its wrapper ViewPager is set to Visibility.NONE. So I looked into it. The flow of ViewPage populate fragments is as follows:
-ViewPager : populate() ->
-PagerAdapter : instantiateItem() ->
-FragmentPagerAapter : instantiateItem() ->
-FragmentTransaction : attach()    **This is where Fragment be attached**
+* When I was working on the project, I find a bug that the fragments get a null context when its wrapper ViewPager is set to Visibility.NONE. So I looked into it. The flow of ViewPage populate fragments is as follows:  
+ViewPager : populate() ->  
+PagerAdapter : instantiateItem() ->  
+FragmentPagerAapter : instantiateItem() ->  
+FragmentTransaction : attach()    **This is where Fragment be attached**  
+
 So the main problem is that populate is not properly called.
   - In normal condition, ie, the visibility is VISIBLE or INVISIBLE. The populate() is called in setOffScreenPageLimit() and onMeasure(); 
   - But when the visibility is set to GONE. the populate will not be called in onMeasure(), so the Fragments are not attached to Activity. So that there Context will be null.
