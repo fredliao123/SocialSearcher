@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -23,7 +22,8 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/9.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Presenter that handles sharedPreference and permission for ACCESS_FINE_LOCATION
+ * for MainActivity
  */
 
 public class MainPresenter extends BasePresenter<MainActivity> {
@@ -35,13 +35,10 @@ public class MainPresenter extends BasePresenter<MainActivity> {
      * Key for get saved search history from sharedpreference
      */
     public static String HISTORY_KEY = "history";
+
     Subscription subGetHistorySet;
+
     Subscription subSaveHistorySet;
-
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
-    //Flag indicating whether a requested permission has been denied after returning in
-    private boolean mPermissionDenied = false;
 
     private MainPresenter(Context context) {
         this.context = context;
@@ -80,25 +77,16 @@ public class MainPresenter extends BasePresenter<MainActivity> {
                 });
     }
 
+    /**
+     * Unsubscribe subsciptions
+     * @param subscriptions
+     */
     private void safelyUnsubscribe(final Subscription... subscriptions) {
         for (Subscription subscription : subscriptions) {
             if (subscription != null && !subscription.isUnsubscribed()) {
                 subscription.unsubscribe();
                 Timber.d("subscription %s unsubscribed", subscription.toString());
             }
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
-        if (PermissionKit.isPermissionGranted(permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-        } else {
-            mPermissionDenied = true;
         }
     }
 
@@ -109,22 +97,11 @@ public class MainPresenter extends BasePresenter<MainActivity> {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
-            PermissionKit.requestPermission(getV(), LOCATION_PERMISSION_REQUEST_CODE,
+            PermissionKit.requestPermission(getV(), PermissionKit.LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, false);
         } else {
-            PermissionKit.requestPermission(getV(), LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, false);
             // Access to the location has been granted to the app.
             Timber.d("Permission has been granted");
         }
-    }
-
-
-    public boolean ismPermissionDenied() {
-        return mPermissionDenied;
-    }
-
-    public void setmPermissionDenied(boolean mPermissionDenied) {
-        this.mPermissionDenied = mPermissionDenied;
     }
 }

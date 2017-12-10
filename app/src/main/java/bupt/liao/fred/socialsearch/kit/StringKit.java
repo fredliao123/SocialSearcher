@@ -36,8 +36,8 @@ public class StringKit {
     /**
      * Extract web url from a string
      *
-     * @param text
-     * @return
+     * @param text string to be extracted
+     * @return a string array contains urls
      */
     public String[] extractLinks(String text) {
         List<String> links = new ArrayList<String>();
@@ -47,7 +47,6 @@ public class StringKit {
             Timber.d("url extracted:" + url);
             links.add(url);
         }
-
         return links.toArray(new String[links.size()]);
     }
 
@@ -69,6 +68,7 @@ public class StringKit {
             ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(context.getColor(R.color.colorPrimary));
             //Set click event
             UrlClickableSpan urlClickableSpan = new UrlClickableSpan(context, s, start, end);
+            //Apply settings to text
             spanText.setSpan(foregroundColorSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             spanText.setSpan(urlClickableSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
@@ -85,6 +85,14 @@ public class StringKit {
         int end = 0;
         Context context;
 
+        /**
+         * Constructor
+         *
+         * @param context
+         * @param string  url
+         * @param start   start index of url
+         * @param end     end index of url
+         */
         public UrlClickableSpan(Context context, String string, int start, int end) {
             super();
             url = string;
@@ -93,6 +101,11 @@ public class StringKit {
             this.context = context;
         }
 
+        /**
+         * Click the url will launch a webacivity to handle the url
+         *
+         * @param tv
+         */
         public void onClick(View tv) {
             if (tv instanceof TextView) {
                 Timber.d("StringKit: url clicked " + url);

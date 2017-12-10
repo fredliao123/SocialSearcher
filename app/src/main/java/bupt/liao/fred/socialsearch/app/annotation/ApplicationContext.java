@@ -8,7 +8,7 @@ import javax.inject.Qualifier;
 /**
  * Created by Fred.Liao on 2017/12/6.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: A scope that describe Application context
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)

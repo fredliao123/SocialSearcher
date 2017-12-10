@@ -7,7 +7,7 @@ import io.reactivex.processors.PublishProcessor;
 /**
  * Created by Fred.Liao on 2017/12/4.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Implementation of IBus
  */
 
 public class RxBusImpl implements IBus {

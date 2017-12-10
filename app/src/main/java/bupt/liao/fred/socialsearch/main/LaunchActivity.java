@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import bupt.liao.fred.flipviewlibrary.FlipView;
 import bupt.liao.fred.socialsearch.R;
@@ -13,22 +12,18 @@ import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
 /**
  * Created by Fred.Liao on 2017/12/10.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: First activity to launch after open the app
+ * Using my own animation library FlipView
  */
 
 public class LaunchActivity extends BaseActivity {
-    private static final String TAG = "MainActivity";
-
-    private static final String BIRTH = "birth";
-
-    TextView text;
 
     FlipView flipView;
 
     @Override
     public void initData(Bundle savedInstanceState) {
         flipView = (FlipView) findViewById(R.id.flipview);
-        //当计时结束时，跳转至主界面
+        //When the animation is over, jump to MainActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

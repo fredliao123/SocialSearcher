@@ -13,7 +13,7 @@ import butterknife.BindView;
 /**
  * Created by Fred.Liao on 2017/12/8.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:Search for category selection view. ie, Video, Until, Near
  */
 
 public class SearchForCategoryView extends RelativeLayout {

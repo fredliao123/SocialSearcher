@@ -1,5 +1,6 @@
 package bupt.liao.fred.socialsearch.main;
 
+import android.Manifest;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,12 +15,12 @@ import android.widget.TextView;
 import com.bigkoo.pickerview.TimePickerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.kit.PermissionKit;
 import bupt.liao.fred.socialsearch.kit.drawingKit;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import timber.log.Timber;
@@ -32,17 +33,30 @@ import timber.log.Timber;
  */
 
 public class AdvancedSearchView extends MaterialSearchView {
+    //The root view
     private View searchLayout;
-    private View searchHintView;
-
-    private SearchForCategoryView searchForCategoryView;
-    private View mTintView;
+    //The container that wraps search top bar. ie.the edittext etc.
     private LinearLayout searchTopBarContainer;
+    //Search top bar, has edittext and some icons
     private RelativeLayout searchTopBar;
+
+    //The search category hint view that show on the left side of search top bar
+    private View searchHintView;
+    //The cancel button in the search hint view
     private ImageView cancelHint;
+    //The hint text in search hint view
     private TextView hintText;
-    private Context context;
+
+    //The search category select view that shows below search top bar
+    private SearchForCategoryView searchForCategoryView;
+    //The callback to change the visibility of searchForCategoryView
     private ICategoryViewController categoryViewController;
+
+    //The tint view that will show after setSuggestion. Need to be removed in our view.
+    private View mTintView;
+
+    private Context context;
+
 
     public AdvancedSearchView(Context context) {
         super(context);
@@ -71,15 +85,23 @@ public class AdvancedSearchView extends MaterialSearchView {
         adjustEditTextPosition();
     }
 
+    /**
+     * Init the search for category select view and add it below the search top bar
+     */
     private void initSearchForCategoryView() {
+        //Init the container of search top bar and add the search for category select view into it
         searchTopBarContainer = (LinearLayout) searchTopBar.getParent();
         searchForCategoryView = SearchForCategoryView.newInstance(context);
         searchTopBarContainer.addView(searchForCategoryView);
+        //click listener for video, near, until feature
         searchForCategoryView.setOnClickListenerToVideo(searchForCategoryOnClickListener);
         searchForCategoryView.setOnClickListenerToNear(searchForCategoryOnClickListener);
         searchForCategoryView.setOnClickListenerToUntil(searchForCategoryOnClickListener);
     }
 
+    /**
+     * Init search hint view and add it on the left side of search top bar
+     */
     private void initSearchHintView() {
         searchHintView = LayoutInflater.from(context).inflate(R.layout.search_view_hint, null);
         hintText = searchHintView.findViewById(R.id.search_hint_text);
@@ -111,6 +133,9 @@ public class AdvancedSearchView extends MaterialSearchView {
         editText.setLayoutParams(layoutParams);
     }
 
+    /**
+     * Methods that deals with search hint view
+     */
     public void showSearchHintView() {
         searchHintView.setVisibility(VISIBLE);
     }
@@ -119,6 +144,17 @@ public class AdvancedSearchView extends MaterialSearchView {
         searchHintView.setVisibility(GONE);
     }
 
+    public void setHintText(String text) {
+        hintText.setText(text);
+    }
+
+    public boolean isHintShown() {
+        return (searchHintView.getVisibility() == ViewGroup.VISIBLE);
+    }
+
+    /**
+     * Methods that deals with search for category select view
+     */
     public void showSearchForCategoryView() {
         searchForCategoryView.setVisibility(VISIBLE);
     }
@@ -127,10 +163,9 @@ public class AdvancedSearchView extends MaterialSearchView {
         searchForCategoryView.setVisibility(GONE);
     }
 
-    public void setHintText(String text) {
-        hintText.setText(text);
-    }
-
+    /**
+     * OnClickListener for video, near, until
+     */
     private final OnClickListener searchForCategoryOnClickListener = new OnClickListener() {
 
         public void onClick(View v) {
@@ -146,6 +181,7 @@ public class AdvancedSearchView extends MaterialSearchView {
                 showSearchHintView();
                 TwitterPresenter.searchForNear();
                 categoryViewController.changeCategoryViewShowStatus();
+                categoryViewController.isLocationPermissionGranted();
             } else if (v.getId() == R.id.saerch_for_until) {
                 Timber.d("search for until");
                 showTimePicker();
@@ -153,6 +189,11 @@ public class AdvancedSearchView extends MaterialSearchView {
         }
     };
 
+    /**
+     * Show the time picker dialog after clicking Until button
+     * Because Twitter search Api can only search for tweets in 7 days
+     * So, the start day should be 7 days before current time
+     */
     private void showTimePicker() {
         Calendar endDate = Calendar.getInstance();
         Calendar startDate = Calendar.getInstance();
@@ -168,8 +209,9 @@ public class AdvancedSearchView extends MaterialSearchView {
             }
         })
                 .isDialog(true)
+                //only show year, month and day.
                 .setType(new boolean[]{true, true, true, false, false, false})
-                .setRangDate(startDate,endDate)
+                .setRangDate(startDate, endDate)
                 .build();
         pvTime.show();
     }
@@ -187,9 +229,6 @@ public class AdvancedSearchView extends MaterialSearchView {
         mTintView.setVisibility(GONE);
     }
 
-    public boolean isHintShown() {
-        return (searchHintView.getVisibility() == ViewGroup.VISIBLE);
-    }
 
     public void setCategoryViewController(ICategoryViewController categoryViewController) {
         this.categoryViewController = categoryViewController;

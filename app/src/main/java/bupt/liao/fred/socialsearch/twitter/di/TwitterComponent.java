@@ -10,7 +10,7 @@ import dagger.Component;
 /**
  * Created by Fred.Liao on 2017/12/6.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:Component for DI.
  */
 
 @Singleton

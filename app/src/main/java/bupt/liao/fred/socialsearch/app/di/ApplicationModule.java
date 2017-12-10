@@ -9,7 +9,6 @@ import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.app.annotation.ApplicationContext;
-import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import bupt.liao.fred.socialsearch.app.network.NetWorkApiImpl;
 import dagger.Module;
@@ -25,13 +24,13 @@ import dagger.Provides;
 public class ApplicationModule {
     private final Application application;
 
-    public ApplicationModule(Application app){
+    public ApplicationModule(Application app) {
         application = app;
     }
 
     @Provides
     @Singleton
-    INetWorkApi provideNetWorkApi(){
+    INetWorkApi provideNetWorkApi() {
         return new NetWorkApiImpl(new ReactiveNetwork());
     }
 
@@ -47,10 +46,9 @@ public class ApplicationModule {
     }
 
     @Provides
-    SharedPreferences provideSharedPreferences(){
+    SharedPreferences provideSharedPreferences() {
         return application.getSharedPreferences("SocialSearch", Context.MODE_PRIVATE);
     }
-
 
 
 }

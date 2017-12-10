@@ -3,7 +3,7 @@ package bupt.liao.fred.socialsearch.event;
 /**
  * Created by Fred.Liao on 2017/12/4.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:Bus event interface
  */
 
 public interface IBus {

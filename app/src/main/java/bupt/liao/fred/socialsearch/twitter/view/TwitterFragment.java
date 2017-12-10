@@ -2,24 +2,21 @@ package bupt.liao.fred.socialsearch.twitter.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.github.pwittchen.infinitescroll.library.InfiniteScrollListener;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import bupt.liao.fred.socialsearch.app.Conf;
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.main.MainActivity;
+import bupt.liao.fred.socialsearch.app.Conf;
+import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
 import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
-import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
 import butterknife.BindString;
 import butterknife.BindView;
 import twitter4j.Status;
@@ -27,18 +24,25 @@ import twitter4j.Status;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Fragment for twitter
  */
 
 public class TwitterFragment extends BaseFragment<TwitterPresenter> {
 
-    @BindString(R.string.no_internet_connection) public String msgNoInternetConnection;
-    @BindString(R.string.cannot_load_more_tweets) public String msgCannotLoadMoreTweets;
-    @BindString(R.string.no_tweets) public String msgNoTweets;
-    @BindString(R.string.no_tweets_formatted) public String msgNoTweetsFormatted;
-    @BindString(R.string.searched_formatted) public String msgSearchedFormatted;
-    @BindString(R.string.api_rate_limit_exceeded) public String msgApiRateLimitExceeded;
-    @BindString(R.string.error_during_search) public String msgErrorDuringSearch;
+    @BindString(R.string.no_internet_connection)
+    public String msgNoInternetConnection;
+    @BindString(R.string.cannot_load_more_tweets)
+    public String msgCannotLoadMoreTweets;
+    @BindString(R.string.no_tweets)
+    public String msgNoTweets;
+    @BindString(R.string.no_tweets_formatted)
+    public String msgNoTweetsFormatted;
+    @BindString(R.string.searched_formatted)
+    public String msgSearchedFormatted;
+    @BindString(R.string.api_rate_limit_exceeded)
+    public String msgApiRateLimitExceeded;
+    @BindString(R.string.error_during_search)
+    public String msgErrorDuringSearch;
 
     @BindView(R.id.recycler_view_container)
     BaseStateControllerLayout stateControllerLayout;
@@ -58,8 +62,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         initStateControlerLayout();
     }
 
-    //TODO
-    public void initStateControlerLayout(){
+    public void initStateControlerLayout() {
         stateControllerLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
         stateControllerLayout.errorView(View.inflate(context, R.layout.view_error, null));
         stateControllerLayout.emptyView(View.inflate(context, R.layout.view_empty, null));
@@ -111,7 +114,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         recyclerView.scrollToPosition(position);
     }
 
-    public void showSearchResult(final List<Status> tweets, final String keyword){
+    public void showSearchResult(final List<Status> tweets, final String keyword) {
         final TwitterAdapter adapter = new TwitterAdapter(getContext(), tweets);
         recyclerView.setAdapter(adapter);
         recyclerView.invalidate();
@@ -121,17 +124,22 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     }
 
 
-    public void searchTweets(String keywords){
+    public void searchTweets(String keywords) {
         getP().searchTweets(keywords);
     }
 
 
     @Override
-    public void onDetach(){
+    public void onDetach() {
         super.onDetach();
         getP().safelyUnsubscribeAll();
     }
 
+    /**
+     * Getters
+     *
+     * @return
+     */
     public ProgressBar getPbLoadMoreTweets() {
         return pbLoadMoreTweets;
     }

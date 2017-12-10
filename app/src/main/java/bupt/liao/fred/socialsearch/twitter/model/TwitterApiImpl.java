@@ -30,7 +30,12 @@ public final class TwitterApiImpl implements ITwitterApi {
         twitterInstance = twitter;
     }
 
-
+    /**
+     * Search for tweets
+     *
+     * @param keyword
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweets(final String keyword) {
         return Observable.create(new Observable.OnSubscribe<List<Status>>() {
@@ -48,6 +53,13 @@ public final class TwitterApiImpl implements ITwitterApi {
         });
     }
 
+    /**
+     * Search for more tweets
+     *
+     * @param keyword
+     * @param maxTweetId
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweets(final String keyword, final long maxTweetId) {
         return Observable.create(new Observable.OnSubscribe<List<Status>>() {
@@ -65,6 +77,14 @@ public final class TwitterApiImpl implements ITwitterApi {
         });
     }
 
+    /**
+     * Search for tweets with location
+     *
+     * @param keyword
+     * @param latitude
+     * @param longitude
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude) {
         final GeoLocation geoLocation = new GeoLocation(latitude, longitude);
@@ -73,7 +93,7 @@ public final class TwitterApiImpl implements ITwitterApi {
             public void call(Subscriber<? super List<Status>> subscriber) {
                 try {
                     final Query query = new Query(keyword).count(Conf.MAX_TWEET_PER_REQUEST);
-                    query.setGeoCode(geoLocation, 100, Query.MILES);
+                    query.setGeoCode(geoLocation, Conf.GEOLOCATION_RADIUS, Query.MILES);
                     final QueryResult result = twitterInstance.search(query);
                     subscriber.onNext(result.getTweets());
                     subscriber.onCompleted();
@@ -84,6 +104,15 @@ public final class TwitterApiImpl implements ITwitterApi {
         });
     }
 
+    /**
+     * Search for more tweets with location
+     *
+     * @param keyword
+     * @param latitude
+     * @param longitude
+     * @param maxTweetId
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweetsWithLocation(final String keyword, final double latitude, final double longitude, final long maxTweetId) {
         final GeoLocation geoLocation = new GeoLocation(latitude, longitude);
@@ -92,7 +121,7 @@ public final class TwitterApiImpl implements ITwitterApi {
             public void call(Subscriber<? super List<Status>> subscriber) {
                 try {
                     final Query query = new Query(keyword).maxId(maxTweetId).count(Conf.MAX_TWEET_PER_REQUEST);
-                    query.setGeoCode(geoLocation, 100, Query.MILES);
+                    query.setGeoCode(geoLocation, Conf.GEOLOCATION_RADIUS, Query.MILES);
                     final QueryResult result = twitterInstance.search(query);
                     subscriber.onNext(result.getTweets());
                     subscriber.onCompleted();
@@ -103,6 +132,13 @@ public final class TwitterApiImpl implements ITwitterApi {
         });
     }
 
+    /**
+     * Search for tweets until a date
+     *
+     * @param keyword
+     * @param date
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date) {
         return Observable.create(new Observable.OnSubscribe<List<Status>>() {
@@ -121,6 +157,14 @@ public final class TwitterApiImpl implements ITwitterApi {
         });
     }
 
+    /**
+     * Search for more tweets until a date
+     *
+     * @param keyword
+     * @param date
+     * @param maxTweetId
+     * @return
+     */
     @Override
     public Observable<List<Status>> searchTweetsWithDate(final String keyword, final String date, final long maxTweetId) {
         return Observable.create(new Observable.OnSubscribe<List<Status>>() {

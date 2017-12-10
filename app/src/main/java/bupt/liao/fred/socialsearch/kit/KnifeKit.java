@@ -14,6 +14,12 @@ import butterknife.Unbinder;
  */
 
 public class KnifeKit {
+
+    /**
+     * This method bind target with butterknife
+     * @param target
+     * @return A unbinder
+     */
     public static Unbinder bind(Object target) {
         if (target instanceof Activity) {
             return ButterKnife.bind((Activity) target);
@@ -25,7 +31,11 @@ public class KnifeKit {
         return Unbinder.EMPTY;
     }
 
-
+    /**
+     * This method bind target with source using butterknife
+     * @param target
+     * @return A unbinder
+     */
     public static Unbinder bind(Object target, Object source) {
         if (source instanceof Activity) {
             return ButterKnife.bind(target, (Activity) source);
@@ -37,7 +47,10 @@ public class KnifeKit {
         return Unbinder.EMPTY;
     }
 
-
+    /**
+     * unbind resources
+     * @param unbinder
+     */
     public static void unbind(Unbinder unbinder) {
         if (unbinder != Unbinder.EMPTY) {
             unbinder.unbind();

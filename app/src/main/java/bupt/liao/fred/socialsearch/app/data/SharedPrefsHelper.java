@@ -2,6 +2,7 @@ package bupt.liao.fred.socialsearch.app.data;
 
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,8 +20,6 @@ import rx.Subscriber;
 
 @Singleton
 public class SharedPrefsHelper {
-
-    public static String PREF_KEY_ACCESS_TOKEN = "access-token";
 
     private SharedPreferences mSharedPreferences;
 
@@ -45,7 +44,7 @@ public class SharedPrefsHelper {
         mSharedPreferences.edit().putBoolean(key, value).apply();
     }
 
-    public void put(String key, Set<String>stringSet){
+    public void put(String key, Set<String> stringSet) {
         mSharedPreferences.edit().putStringSet(key, stringSet).apply();
     }
 
@@ -65,8 +64,8 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getBoolean(key, defaultValue);
     }
 
-    public Set<String> get(String key){
-        return mSharedPreferences.getStringSet(key, null);
+    public Set<String> get(String key) {
+        return mSharedPreferences.getStringSet(key, new HashSet<String>());
     }
 
     public void deleteSavedData(String key) {
@@ -75,11 +74,12 @@ public class SharedPrefsHelper {
 
     /**
      * Get String set asynchronously
+     *
      * @param key
      * @return
      */
-    public Observable<Set<String>> getStringSet(final String key){
-        return Observable.create(new Observable.OnSubscribe<Set<String>>(){
+    public Observable<Set<String>> getStringSet(final String key) {
+        return Observable.create(new Observable.OnSubscribe<Set<String>>() {
             @Override
             public void call(Subscriber<? super Set<String>> subscriber) {
                 Set<String> set = get(key);
@@ -90,12 +90,13 @@ public class SharedPrefsHelper {
 
     /**
      * Put String set asynchronously
+     *
      * @param key
      * @param set
      * @return
      */
-    public Observable putStringSet(final String key, final Set<String> set){
-        return Observable.create(new Observable.OnSubscribe(){
+    public Observable putStringSet(final String key, final Set<String> set) {
+        return Observable.create(new Observable.OnSubscribe() {
             @Override
             public void call(Object o) {
                 put(key, set);

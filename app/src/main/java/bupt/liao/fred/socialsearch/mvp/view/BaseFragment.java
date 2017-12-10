@@ -21,7 +21,7 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:BaseFragment using MVP model
  */
 
 public abstract class BaseFragment <P extends IPresenter> extends RxFragment implements IViewBase<P> {

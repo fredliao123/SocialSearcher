@@ -25,7 +25,7 @@ import twitter4j.Status;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: Adapter for RecyclerView in TwitterFragment
  */
 
 public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHolder> {
@@ -50,6 +50,7 @@ public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Status tweet = tweets.get(position);
+        //Load head image using Picasso
         Picasso.with(context).load(tweet.getUser().getProfileImageURL()).into(holder.ivAvatar);
         holder.tvName.setText(tweet.getUser().getName());
         final String formattedLogin = String.format(LOGIN_FORMAT, tweet.getUser().getScreenName());
@@ -57,9 +58,11 @@ public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHold
         final DateTime createdAt = new DateTime(tweet.getCreatedAt());
         final DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_TIME_PATTERN);
         holder.tvDate.setText(formatter.print(createdAt));
+        //Extract links in content text
         String[] urls = StringKit.getInstance().extractLinks(tweet.getText());
+        //Change url color in content text
         holder.tvMessage.setText(StringKit.getInstance().getSpanText(context, urls, tweet.getText()));
-        holder.tvMessage.setMovementMethod(LinkMovementMethod.getInstance ());
+        holder.tvMessage.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -67,6 +70,11 @@ public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHold
         return tweets.size();
     }
 
+    /**
+     * This method returns last id to load more tweets
+     *
+     * @return
+     */
     public long getLastTweetId() {
         final Status tweet = tweets.get(getItemCount() - 1);
         return tweet.getId();

@@ -17,7 +17,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by Fred.Liao on 2017/12/10.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:Unit Test for TwitterApiImpl
  */
 
 @RunWith(AndroidJUnit4.class)

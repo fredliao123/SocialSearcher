@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.app.BaseApplication;
 import bupt.liao.fred.socialsearch.app.annotation.ApplicationContext;
-import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
 import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import dagger.Component;
@@ -19,7 +18,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = { ApplicationModule.class })
+@Component(modules = {ApplicationModule.class})
 public interface ApplicationComponent {
     void inject(BaseApplication baseApplication);
 

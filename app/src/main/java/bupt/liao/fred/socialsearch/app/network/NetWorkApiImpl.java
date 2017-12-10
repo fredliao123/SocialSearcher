@@ -7,7 +7,6 @@ import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 
 import javax.inject.Inject;
 
-import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import rx.Observable;
 
 /**
@@ -27,6 +26,7 @@ public final class NetWorkApiImpl implements INetWorkApi {
 
     /**
      * Check internet connection
+     *
      * @param context
      * @return if the internet is connected
      */
@@ -40,6 +40,7 @@ public final class NetWorkApiImpl implements INetWorkApi {
 
     /**
      * Observe the connection of internet. inform observer when internet status changed
+     *
      * @param context
      * @return
      */

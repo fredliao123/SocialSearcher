@@ -17,7 +17,7 @@ import bupt.liao.fred.socialsearch.R;
 /**
  * Created by Fred.Liao on 2017/12/6.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:BaseStateControllerLayout with four views, loadingView, errorView, emptyView, contentView
  */
 
 public class BaseStateControllerLayout extends FrameLayout {
@@ -50,6 +50,11 @@ public class BaseStateControllerLayout extends FrameLayout {
         setupAttrs(context, attrs);
     }
 
+    /**
+     * Can set view from xml
+     * @param context
+     * @param attrs
+     */
     private void setupAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BaseStateControllerLayout);
         loadingLayoutId = typedArray.getResourceId(R.styleable.BaseStateControllerLayout_loadingLayoutId, RES_NONE);

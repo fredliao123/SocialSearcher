@@ -10,7 +10,6 @@ import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
 import bupt.liao.fred.socialsearch.twitter.model.TwitterApiImpl;
 import dagger.Module;
 import dagger.Provides;
-import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -18,7 +17,7 @@ import twitter4j.conf.ConfigurationBuilder;
 /**
  * Created by Fred.Liao on 2017/12/5.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:DI Module for twitter.
  */
 
 @Module
@@ -26,14 +25,14 @@ public final class TwitterModule {
     private ITwitterApi twitterApi = null;
     private Context context;
 
-    public TwitterModule(Context context){
+    public TwitterModule(Context context) {
         this.context = context;
     }
 
     @Provides
     @Singleton
     public ITwitterApi provideTwitterApi() {
-        if(twitterApi == null) {
+        if (twitterApi == null) {
             final Configuration configuration = createConfiguration();
             final TwitterFactory twitterFactory = new TwitterFactory(configuration);
             twitterApi = new TwitterApiImpl(twitterFactory.getInstance());
@@ -55,7 +54,7 @@ public final class TwitterModule {
 
     @Provides
     @Singleton
-    GPSmanager provideGPSmanager(){
+    GPSmanager provideGPSmanager() {
         return new GPSmanager(context);
     }
 }

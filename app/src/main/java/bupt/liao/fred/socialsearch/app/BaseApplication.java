@@ -16,10 +16,12 @@ import timber.log.Timber;
  */
 
 public final class BaseApplication extends Application {
+
     private static ApplicationComponent component;
     private static Context context;
 
-    @Override public void onCreate() {
+    @Override
+    public void onCreate() {
         super.onCreate();
         buildApplicationComponent();
         plantLoggingTree();
@@ -46,17 +48,21 @@ public final class BaseApplication extends Application {
         }
     }
 
+    /**
+     * For crash report in release version
+     */
+    private static class CrashReportingTree extends Timber.Tree {
+        @Override
+        protected void log(int priority, String tag, String message, Throwable t) {
+            // implement crash reporting here
+        }
+    }
+
     public static ApplicationComponent getComponent() {
         return component;
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return context;
-    }
-
-    private static class CrashReportingTree extends Timber.Tree {
-        @Override protected void log(int priority, String tag, String message, Throwable t) {
-            // implement crash reporting here
-        }
     }
 }

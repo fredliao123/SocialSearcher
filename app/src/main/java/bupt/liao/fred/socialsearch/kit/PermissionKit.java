@@ -17,11 +17,12 @@ import bupt.liao.fred.socialsearch.main.MainActivity;
 /**
  * Created by Fred.Liao on 2017/12/9.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description: A class to acquire Permission
  */
 
 public abstract class PermissionKit {
 
+    public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     /**
      * Requests the fine location permission. If a rationale with an additional explanation should
@@ -36,15 +37,12 @@ public abstract class PermissionKit {
         } else {
             // Location permission has not been granted yet, request it.
             ActivityCompat.requestPermissions(activity, new String[]{permission}, requestId);
-
         }
     }
 
     /**
-     * Checks if the result contains a {@link PackageManager#PERMISSION_GRANTED} result for a
+     * Checks if the result contains a PERMISSION_GRANTED result for a
      * permission from a runtime permissions request.
-     *
-     * @see android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback
      */
     public static boolean isPermissionGranted(String[] grantPermissions, int[] grantResults,
                                               String permission) {
@@ -102,9 +100,7 @@ public abstract class PermissionKit {
     /**
      * A dialog that explains the use of the location permission and requests the necessary
      * permission.
-     * <p>
      * The activity should implement
-     * {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback}
      * to handle permit or denial of this permission request.
      */
     public static class RationaleDialog extends DialogFragment {
@@ -118,12 +114,10 @@ public abstract class PermissionKit {
         /**
          * Creates a new instance of a dialog displaying the rationale for the use of the location
          * permission.
-         * <p>
          * The permission is requested after clicking 'ok'.
          *
          * @param requestCode    Id of the request that is used to request the permission. It is
          *                       returned to the
-         *                       {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback}.
          * @param finishActivity Whether the calling Activity should be finished if the dialog is
          *                       cancelled.
          */

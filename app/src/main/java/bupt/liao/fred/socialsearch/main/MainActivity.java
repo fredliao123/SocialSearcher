@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ import timber.log.Timber;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements ICategoryViewController {
 
-    //To find out is the searchView has text;
+    //flag to show whether the searchView has text;
     private boolean searchViewHasText = false;
 
     @BindView(R.id.toolbar)
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     ViewPager viewPager;
     @BindView(R.id.search_view)
     AdvancedSearchView searchView;
+    //Show a welcome view when user first open the app
     @BindView(R.id.welcomecontainer)
     View welcomeContainer;
     @BindView(R.id.viewpager_container)
@@ -57,20 +59,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
 
     //Expandable for more social medias
     List<Fragment> fragmentList = new ArrayList<>();
+    //The title for each page, expandable
     String[] titles = {"Twitter"};
     BaseFragmentPagerAdapter adapter;
     /**
      * This set can only be in Activity,but not hold by presenter,because
-     * when onDestroy be called ,the presenter has already be recycled. a new set will be saved.
+     * when onDestroy be called ,the presenter has already be recycled. a wrong set will be saved.
      */
-    Set<String> historySuggestions;
+    Set<String> historySuggestions = new HashSet<>();
 
     @Override
     public void initData(Bundle savedInstanceState) {
         setSupportActionBar(toolbar);
         initSearchView();
         getP().initHistorySet();
-        getP().enableLocationPermission();
         initViewPager();
         showWelcomeView();
     }
@@ -80,20 +82,23 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
      * Init searchview
      */
     private void initSearchView() {
+        //set the callback to control the search category select view from this activity
         searchView.setCategoryViewController(this);
         searchView.setVoiceSearch(false);
         searchView.setCursorDrawable(R.drawable.search_view_cursor);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             /**
              * This method will be called when a search text is entered and user pressed search button
-             * @param query
+             * @param query The search text user typed in
              * @return
              */
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 Timber.d("pressed search icon");
+                //Add query to search history and to be further saved in sharedpreference
                 historySuggestions.add(query);
                 searchView.setSuggestions(historySuggestions.toArray(new String[historySuggestions.size()]));
+                //Due to only one page, so we can write this way. If added more page, alternation will be needed
                 if (fragmentList.get(0) instanceof TwitterFragment) {
                     ((TwitterFragment) fragmentList.get(0)).searchTweets(query);
                 }
@@ -115,7 +120,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
                     searchViewHasText = false;
                 }
                 changeCategoryViewShowStatus();
-
                 return false;
             }
         });
@@ -163,7 +167,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
 
 
     /**
-     * Asynchronously save search history when activity is destroyed
+     * Save search history when activity is destroyed
      */
     @Override
     protected void onDestroy() {
@@ -191,6 +195,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
         viewpagerContainer.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * To decide whether to show the search category select view is divided in four
+     * situations as flows
+     */
     @Override
     public void changeCategoryViewShowStatus() {
         //No input text, and no hint, show category
@@ -212,9 +220,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        getP().onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void isLocationPermissionGranted() {
+        getP().enableLocationPermission();
     }
 
     public Set<String> getHistorySuggestions() {

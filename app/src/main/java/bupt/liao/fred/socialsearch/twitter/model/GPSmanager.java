@@ -20,7 +20,7 @@ import timber.log.Timber;
 /**
  * Created by Fred.Liao on 2017/12/9.
  * Email:fredliaobupt@qq.com
- * Description:
+ * Description:GPS manager for location acquire.
  */
 
 public class GPSmanager extends Service implements LocationListener {
@@ -52,9 +52,13 @@ public class GPSmanager extends Service implements LocationListener {
     @Inject
     public GPSmanager(Context context) {
         this.mContext = context;
-        getLocation();
     }
 
+    /**
+     * Get current location.
+     *
+     * @return current location
+     */
     public Location getLocation() {
         try {
             locationManager = (LocationManager) mContext
@@ -115,6 +119,10 @@ public class GPSmanager extends Service implements LocationListener {
                     }
 
                 }
+                //Due to deny of permission, location can not be acquired
+                if (location == null) {
+                    canGetLocation = false;
+                }
             }
 
         } catch (Exception e) {
@@ -171,7 +179,20 @@ public class GPSmanager extends Service implements LocationListener {
      * Function to show settings alert dialog
      * On pressing Settings button will lauch Settings Options
      */
-    public void showSettingsAlert() {
+    public boolean showSettingsAlert() {
+        //Before showing the dialog, check if GPS and NetWork are actually disabled
+        //Because this can also becaused by denied permission
+        locationManager = (LocationManager) mContext
+                .getSystemService(LOCATION_SERVICE);
+        // getting GPS status
+        isGPSEnabled = locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // getting network status
+        isNetworkEnabled = locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (isGPSEnabled || isNetworkEnabled) {
+            return false;
+        }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         // Setting Dialog Title
@@ -197,6 +218,7 @@ public class GPSmanager extends Service implements LocationListener {
 
         // Showing Alert Message
         alertDialog.show();
+        return true;
     }
 
     @Override
