@@ -8,6 +8,7 @@ import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import javax.inject.Inject;
 
 import rx.Observable;
+import timber.log.Timber;
 
 /**
  * Created by Fred.Liao on 2017/12/5.
@@ -32,10 +33,15 @@ public final class NetWorkApiImpl implements INetWorkApi {
      */
     @Override
     public boolean isConnectedToInternet(Context context) {
-        final ConnectivityStatus status = reactiveNetwork.getConnectivityStatus(context, true);
-        final boolean connectedToWifi = status == ConnectivityStatus.WIFI_CONNECTED_HAS_INTERNET;
-        final boolean connectedToMobile = status == ConnectivityStatus.MOBILE_CONNECTED;
-        return connectedToWifi || connectedToMobile;
+        try {
+            final ConnectivityStatus status = reactiveNetwork.getConnectivityStatus(context, true);
+            final boolean connectedToWifi = status == ConnectivityStatus.WIFI_CONNECTED_HAS_INTERNET;
+            final boolean connectedToMobile = status == ConnectivityStatus.MOBILE_CONNECTED;
+            return connectedToWifi || connectedToMobile;
+        }catch (NullPointerException e){
+            Timber.d("A null pointer exception happened in isConnectedToInternet " + e);
+        }
+        return false;
     }
 
     /**

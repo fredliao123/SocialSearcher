@@ -190,7 +190,7 @@ public class GPSmanager extends Service implements LocationListener {
         // getting network status
         isNetworkEnabled = locationManager
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (isGPSEnabled || isNetworkEnabled) {
+        if (isGPSEnabled && isNetworkEnabled) {
             return false;
         }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);

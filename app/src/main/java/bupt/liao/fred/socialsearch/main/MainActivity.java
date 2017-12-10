@@ -165,18 +165,18 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
         return result;
     }
 
-
     /**
      * Save search history when activity is destroyed
      */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         BaseApplication
                 .getComponent()
                 .getSharedPrefsHelper()
-                .putStringSet(getP().HISTORY_KEY, historySuggestions);
+                .put(getP().HISTORY_KEY, historySuggestions);
     }
+
 
     @Override
     public MainPresenter newP() {
