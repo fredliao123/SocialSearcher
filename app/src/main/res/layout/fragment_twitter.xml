@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout
+    <bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout
         android:id="@+id/recycler_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,6 +32,6 @@
                 android:visibility="visible" />
         </RelativeLayout>
 
-    </bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout>
+    </bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout>
 
 </RelativeLayout>

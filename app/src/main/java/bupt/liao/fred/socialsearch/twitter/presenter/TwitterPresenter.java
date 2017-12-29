@@ -1,23 +1,17 @@
 package bupt.liao.fred.socialsearch.twitter.presenter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.view.View;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.app.BaseApplication;
-import bupt.liao.fred.socialsearch.mvp.presenter.BasePresenter;
-import bupt.liao.fred.socialsearch.twitter.di.DaggerTwitterComponent;
-import bupt.liao.fred.socialsearch.twitter.di.TwitterComponent;
-import bupt.liao.fred.socialsearch.twitter.di.TwitterModule;
-import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
+import bupt.liao.fred.socialsearch.app.gps.GPSmanager;
+import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
+import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
+import bupt.liao.fred.socialsearch.twitter.TwitterContract;
 import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
-import bupt.liao.fred.socialsearch.twitter.view.TwitterAdapter;
-import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,21 +26,16 @@ import twitter4j.TwitterException;
  * Description:The Presenter for twitter activity
  */
 
-public class TwitterPresenter extends BasePresenter<TwitterFragment> {
-    TwitterComponent component;
-
+public class TwitterPresenter extends BasePresenter<TwitterContract.TwitterView> implements TwitterContract.TwitterPresenter {
     //Search content
     private String keywords = "";
-    private Context context;
 
     private Subscription subSearchTweets;
     private Subscription subLoadMoreTweets;
 
-    @Inject
     protected ITwitterApi twitterApi;
-
-    @Inject
     protected GPSmanager mGPSmanager;
+    protected INetWorkApi netWorkApi;
 
     //flag for video search
     public volatile static boolean SEARCH_VIDEO = false;
@@ -99,22 +88,16 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         UNITL_DATE = null;
     }
 
-
-    public TwitterComponent getComponent() {
-        if (component == null) {
-            component = DaggerTwitterComponent.builder().twitterModule(new TwitterModule(context)).build();
-        }
-        return component;
-    }
-
-    public TwitterPresenter(Context context) {
-        this.context = context;
-        component = DaggerTwitterComponent.builder().twitterModule(new TwitterModule(context)).build();
-        component.inject(this);
-    }
-
-    public static TwitterPresenter newInstance(Context context) {
-        return new TwitterPresenter(context);
+    @Inject
+    public TwitterPresenter(TwitterContract.TwitterView view,
+                            ITwitterApi twitterApi,
+                            GPSmanager mGPSmanager,
+                            INetWorkApi netWorkApi
+    ) {
+        super(view);
+        this.twitterApi = twitterApi;
+        this.mGPSmanager = mGPSmanager;
+        this.netWorkApi = netWorkApi;
     }
 
     /**
@@ -122,20 +105,21 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
      *
      * @param firstVisibleItemPosition
      */
+    @Override
     public void scrollToEnd(final int firstVisibleItemPosition) {
         if (subLoadMoreTweets != null && !subLoadMoreTweets.isUnsubscribed()) {
             return;
         }
         //No internet
-        if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
+        if (!netWorkApi.isConnectedToInternet()) {
             Timber.d("cannot search tweets - no internet connection");
-            getV().getStateControllerLayout().showError();
-            getV().showSnackBar(getV().msgNoInternetConnection);
+            v.showErrorView();
+            v.showSnackBar(v.getStringRes(R.string.no_internet_connection));
             return;
         }
 
         //To decide which id should load from
-        final long lastTweetId = ((TwitterAdapter) getV().getRecyclerView().getAdapter()).getLastTweetId();
+        final long lastTweetId = v.getLastTweetId();
 
         //Search for video
         if (SEARCH_VIDEO) {
@@ -162,7 +146,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                 // can't get location,GPS or Network is not enabled.Ask user to enable GPS/network in settings
                 if (!mGPSmanager.showSettingsAlert()) {
                     //If GPS or Network is enabled, but still can't get position.Then it must caused by permission deny
-                    getV().showSnackBar(getV().getResources().getString(R.string.permission_rationale_location));
+                    v.showSnackBar(v.getStringRes(R.string.permission_rationale_location));
                 }
             }
         }
@@ -190,15 +174,15 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         safelyUnsubscribe(subLoadMoreTweets, subSearchTweets);
         keywords = keyword;
         //No internet
-        if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
+        if (!netWorkApi.isConnectedToInternet()) {
             Timber.d("cannot search tweets - no internet connection");
-            getV().getStateControllerLayout().showError();
-            getV().showSnackBar(getV().msgNoInternetConnection);
+            v.showErrorView();
+            v.showSnackBar(v.getStringRes(R.string.no_internet_connection));
             return;
         }
         //Just in case the search work is a bunch of blanks
         if (!twitterApi.canSearchTweets(keywords)) {
-            getV().getStateControllerLayout().showError();
+            v.showErrorView();
             Timber.d("cannot search tweets - invalid keyword: %s", keywords);
             return;
         }
@@ -227,7 +211,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                 // can't get location.GPS or Network is not enabled.Ask user to enable GPS/network in settings
                 if (!mGPSmanager.showSettingsAlert()) {
                     //If GPS or Network is enabled, but still can't get position.Then it must caused by permission deny
-                    getV().showSnackBar(getV().getResources().getString(R.string.permission_rationale_location));
+                    v.showSnackBar(v.getStringRes(R.string.permission_rationale_location));
                 }
             }
         }
@@ -261,13 +245,13 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
             @Override
             public void onStart() {
                 //Show loading view
-                getV().getPbLoadMoreTweets().setVisibility(View.VISIBLE);
+                v.setPbLoadMoreTweetsVisible();
                 Timber.d("loading more tweets");
             }
 
             @Override
             public void onCompleted() {
-                getV().getPbLoadMoreTweets().setVisibility(View.GONE);
+                v.setPbLoadMoreTweetsGone();
                 Timber.d("more tweets loaded");
                 unsubscribe();
             }
@@ -275,20 +259,20 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
             @Override
             public void onError(Throwable e) {
                 //No internet error
-                if (!BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context)) {
-                    getV().showSnackBar(getV().msgNoInternetConnection);
-                    getV().getStateControllerLayout().showError();
+                if (!netWorkApi.isConnectedToInternet()) {
+                    v.showSnackBar(v.getStringRes(R.string.no_internet_connection));
+                    v.showErrorView();
                     Timber.d("no internet connection");
                 } else {
-                    getV().showSnackBar(getV().msgCannotLoadMoreTweets);
+                    v.showSnackBar(v.getStringRes(R.string.cannot_load_more_tweets));
                 }
-                getV().getPbLoadMoreTweets().setVisibility(View.GONE);
+                v.setPbLoadMoreTweetsGone();
                 Timber.d("couldn't load more tweets");
             }
 
             @Override
             public void onNext(List<Status> newTweets) {
-                getV().createNewTweetsAdapterAndRefresh(newTweets, firstVisibleItemPosition);
+                v.createNewTweetsAdapterAndRefresh(newTweets, firstVisibleItemPosition);
             }
         };
     }
@@ -306,7 +290,7 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
             public void onStart() {
                 //Show loading view
                 Timber.d("searching tweets for keyword: %s", keyword);
-                getV().getStateControllerLayout().showLoading();
+                v.showLoadingView();
             }
 
 
@@ -318,8 +302,8 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
             @Override
             public void onError(final Throwable e) {
                 final String message = getErrorMessage((TwitterException) e);
-                getV().showSnackBar(message);
-                getV().getStateControllerLayout().showError();
+                v.showSnackBar(message);
+                v.showErrorView();
                 Timber.d("error during search: %s", message);
             }
 
@@ -329,10 +313,6 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
                 handleSearchResults(tweets, keyword);
             }
         };
-    }
-
-    public void safelyUnsubscribeAll() {
-        safelyUnsubscribe(subLoadMoreTweets, subSearchTweets);
     }
 
     private void safelyUnsubscribe(final Subscription... subscriptions) {
@@ -353,9 +333,9 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
     @NonNull
     private String getErrorMessage(final TwitterException e) {
         if (e.getErrorCode() == twitterApi.getApiRateLimitExceededErrorCode()) {
-            return getV().msgApiRateLimitExceeded;
+            return v.getStringRes(R.string.api_rate_limit_exceeded);
         }
-        return getV().msgErrorDuringSearch;
+        return v.getStringRes(R.string.error_during_search);
     }
 
     /**
@@ -368,14 +348,14 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         Timber.d("handling search results");
         if (tweets.isEmpty()) {
             Timber.d("no tweets");
-            final String message = String.format(getV().msgNoTweetsFormatted, handleKeyWordsInDifferentCategory(keyword));
-            getV().showSnackBar(message);
-            getV().getStateControllerLayout().showEmpty();
+            final String message = String.format(v.getStringRes(R.string.no_tweets_formatted), handleKeyWordsInDifferentCategory(keyword));
+            v.showSnackBar(message);
+            v.showEmptyView();
             return;
         }
 
         Timber.d("passing search results to view");
-        getV().showSearchResult(tweets, handleKeyWordsInDifferentCategory(keyword));
+        v.showSearchResult(tweets, handleKeyWordsInDifferentCategory(keyword));
     }
 
     /**
@@ -395,5 +375,10 @@ public class TwitterPresenter extends BasePresenter<TwitterFragment> {
         } else {
             return keyword;
         }
+    }
+
+    @Override
+    public void unsubscribeAll() {
+        safelyUnsubscribe(subLoadMoreTweets, subSearchTweets);
     }
 }

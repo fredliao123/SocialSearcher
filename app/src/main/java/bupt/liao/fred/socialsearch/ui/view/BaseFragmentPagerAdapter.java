@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.view.adapter;
+package bupt.liao.fred.socialsearch.ui.view;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

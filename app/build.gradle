@@ -3,7 +3,8 @@ apply plugin: 'com.android.application'
 ext {
     versionControl = [
             VSupportSdk : '26.1.0',
-            VRxlifecycle: "2.0.1"
+            VRxlifecycle: "2.0.1",
+            DaggerVersion : "2.11"
     ]
 }
 
@@ -62,6 +63,10 @@ android {
         exclude 'META-INF/services/com.fasterxml.jackson.databind.Module'
         exclude 'META-INF/rxjava.properties'
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -83,8 +88,13 @@ dependencies {
     implementation 'com.github.pwittchen:reactivenetwork:0.2.0'
 
     //dependency injection & view injection
-    implementation 'com.google.dagger:dagger:2.9'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
+    implementation "com.google.dagger:dagger:${versionControl["DaggerVersion"]}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${versionControl["DaggerVersion"]}"
+    // Dagger Android
+    annotationProcessor "com.google.dagger:dagger-android-processor:${versionControl["DaggerVersion"]}"
+    compile "com.google.dagger:dagger-android-support:${versionControl["DaggerVersion"]}"
+    // if you are not using support library, include this instead
+    compile "com.google.dagger:dagger-android:${versionControl["DaggerVersion"]}"
     provided 'javax.annotation:jsr250-api:1.0'
     implementation "com.jakewharton:butterknife:8.4.0"
     annotationProcessor "com.jakewharton:butterknife-compiler:8.4.0"

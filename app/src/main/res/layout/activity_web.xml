@@ -6,7 +6,7 @@
 
     <include layout="@layout/toolbar"></include>
 
-    <bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout
+    <bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,7 +23,7 @@
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
-    </bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout>
+    </bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout>
 
 
 </LinearLayout>

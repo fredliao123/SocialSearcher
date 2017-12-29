@@ -1,7 +1,6 @@
 package bupt.liao.fred.socialsearch.main;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,16 +13,20 @@ import android.widget.RelativeLayout;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import javax.inject.Inject;
 
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.app.BaseApplication;
-import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
-import bupt.liao.fred.socialsearch.mvp.view.adapter.BaseFragmentPagerAdapter;
+import bupt.liao.fred.socialsearch.app.App;
+import bupt.liao.fred.socialsearch.ui.common.BaseActivity;
+import bupt.liao.fred.socialsearch.ui.view.BaseFragmentPagerAdapter;
 import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import butterknife.BindView;
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasFragmentInjector;
 import timber.log.Timber;
 
 /**
@@ -37,7 +40,10 @@ import timber.log.Timber;
  */
 
 
-public class MainActivity extends BaseActivity<MainPresenter> implements ICategoryViewController {
+public class MainActivity extends BaseActivity implements MainContract.MainView,ICategoryViewController {
+
+    @Inject
+    MainPresenter presenter;
 
     //flag to show whether the searchView has text;
     private boolean searchViewHasText = false;
@@ -62,19 +68,29 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     //The title for each page, expandable
     String[] titles = {"Twitter"};
     BaseFragmentPagerAdapter adapter;
-    /**
-     * This set can only be in Activity,but not hold by presenter,because
-     * when onDestroy be called ,the presenter has already be recycled. a wrong set will be saved.
-     */
-    Set<String> historySuggestions = new HashSet<>();
+
+
+    @Override
+    public void onCreate(Bundle saveInstanceState){
+        super.onCreate(saveInstanceState);
+    }
 
     @Override
     public void initData(Bundle savedInstanceState) {
+        initInjection();
         setSupportActionBar(toolbar);
         initSearchView();
-        getP().initHistorySet();
+        presenter.getHistorySet();
         initViewPager();
         showWelcomeView();
+    }
+
+    private void initInjection(){
+        DaggerMainComponent.builder().
+                appComponent(((App)getApplication()).getComponent()).
+                mainModule(new MainModule(this)).
+                build().
+                inject(this);
     }
 
 
@@ -96,8 +112,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
             public boolean onQueryTextSubmit(final String query) {
                 Timber.d("pressed search icon");
                 //Add query to search history and to be further saved in sharedpreference
-                historySuggestions.add(query);
-                searchView.setSuggestions(historySuggestions.toArray(new String[historySuggestions.size()]));
+                presenter.addQueryToHistorySet(query);
                 //Due to only one page, so we can write this way. If added more page, alternation will be needed
                 if (fragmentList.get(0) instanceof TwitterFragment) {
                     ((TwitterFragment) fragmentList.get(0)).searchTweets(query);
@@ -171,16 +186,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
     @Override
     protected void onPause() {
         super.onPause();
-        BaseApplication
-                .getComponent()
-                .getSharedPrefsHelper()
-                .put(getP().HISTORY_KEY, historySuggestions);
-    }
-
-
-    @Override
-    public MainPresenter newP() {
-        return MainPresenter.newInstance(context);
+        presenter.saveHistorySet();
+        presenter.unsubscribeAll();
     }
 
     /**
@@ -221,14 +228,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements ICatego
 
     @Override
     public void isLocationPermissionGranted() {
-        getP().enableLocationPermission();
+        presenter.enableLocationPermission(this);
     }
 
-    public Set<String> getHistorySuggestions() {
-        return historySuggestions;
+    @Override
+    public void setSuggestions(String[] suggestions) {
+        searchView.setSuggestions(suggestions);
     }
 
-    public void setHistorySuggestions(Set<String> historySuggestions) {
-        this.historySuggestions = historySuggestions;
+    @Override
+    public void showSuggestions() {
+        searchView.showSuggestions();
     }
 }

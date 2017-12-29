@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.twitter.model;
+package bupt.liao.fred.socialsearch.app.gps;
 
 import android.app.Service;
 import android.content.Context;

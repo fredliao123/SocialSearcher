@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.mvp.view.ui.WebActivity;
+import bupt.liao.fred.socialsearch.web.WebActivity;
 import timber.log.Timber;
 
 /**

@@ -13,7 +13,7 @@ import rx.Observable;
  */
 
 public interface INetWorkApi {
-    boolean isConnectedToInternet(Context context);
+    boolean isConnectedToInternet();
 
-    Observable<ConnectivityStatus> observeConnectivity(final Context context);
+    Observable<ConnectivityStatus> observeConnectivity();
 }

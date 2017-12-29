@@ -1,7 +1,9 @@
 package bupt.liao.fred.socialsearch.twitter.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,13 +14,20 @@ import com.github.pwittchen.infinitescroll.library.InfiniteScrollListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import bupt.liao.fred.socialsearch.R;
+import bupt.liao.fred.socialsearch.app.App;
 import bupt.liao.fred.socialsearch.app.Conf;
-import bupt.liao.fred.socialsearch.mvp.view.BaseFragment;
-import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
+import bupt.liao.fred.socialsearch.twitter.di.DaggerTwitterComponent;
+import bupt.liao.fred.socialsearch.twitter.di.TwitterModule;
+import bupt.liao.fred.socialsearch.twitter.di.TwitterViewModule;
+import bupt.liao.fred.socialsearch.ui.view.BaseFragment;
+import bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout;
+import bupt.liao.fred.socialsearch.twitter.TwitterContract;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
-import butterknife.BindString;
 import butterknife.BindView;
+import dagger.android.support.AndroidSupportInjection;
 import twitter4j.Status;
 
 /**
@@ -27,22 +36,10 @@ import twitter4j.Status;
  * Description: Fragment for twitter
  */
 
-public class TwitterFragment extends BaseFragment<TwitterPresenter> {
+public class TwitterFragment extends BaseFragment implements TwitterContract.TwitterView {
 
-    @BindString(R.string.no_internet_connection)
-    public String msgNoInternetConnection;
-    @BindString(R.string.cannot_load_more_tweets)
-    public String msgCannotLoadMoreTweets;
-    @BindString(R.string.no_tweets)
-    public String msgNoTweets;
-    @BindString(R.string.no_tweets_formatted)
-    public String msgNoTweetsFormatted;
-    @BindString(R.string.searched_formatted)
-    public String msgSearchedFormatted;
-    @BindString(R.string.api_rate_limit_exceeded)
-    public String msgApiRateLimitExceeded;
-    @BindString(R.string.error_during_search)
-    public String msgErrorDuringSearch;
+    @Inject
+    TwitterPresenter twitterPresenter;
 
     @BindView(R.id.recycler_view_container)
     BaseStateControllerLayout stateControllerLayout;
@@ -55,6 +52,16 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
 
     LinearLayoutManager layoutManager;
 
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        DaggerTwitterComponent.builder().
+                appComponent(((App)getActivity().getApplication()).getComponent()).
+                twitterModule(new TwitterModule()).
+                twitterViewModule(new TwitterViewModule(this)).
+                build().
+                inject(this);
+    }
 
     @Override
     public void initData(Bundle savedInstanceState) {
@@ -81,7 +88,7 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         return new InfiniteScrollListener(Conf.MAX_TWEET_PER_REQUEST, layoutManager) {
             @Override
             public void onScrolledToEnd(int firstVisibleItemPosition) {
-                getP().scrollToEnd(firstVisibleItemPosition);
+                twitterPresenter.scrollToEnd(firstVisibleItemPosition);
             }
         };
     }
@@ -96,12 +103,6 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
     }
 
     @Override
-    public TwitterPresenter newP() {
-        return TwitterPresenter.newInstance(getContext());
-    }
-
-
-    @NonNull
     public void createNewTweetsAdapterAndRefresh(List<Status> newTweets, int position) {
         final TwitterAdapter adapter = (TwitterAdapter) recyclerView.getAdapter();
         final List<Status> oldTweets = adapter.getTweets();
@@ -114,41 +115,69 @@ public class TwitterFragment extends BaseFragment<TwitterPresenter> {
         recyclerView.scrollToPosition(position);
     }
 
+    @Override
     public void showSearchResult(final List<Status> tweets, final String keyword) {
         final TwitterAdapter adapter = new TwitterAdapter(getContext(), tweets);
         recyclerView.setAdapter(adapter);
         recyclerView.invalidate();
         stateControllerLayout.showContent();
-        final String message = String.format(msgSearchedFormatted, keyword);
+        final String message = String.format(getStringRes(R.string.searched_formatted), keyword);
         showSnackBar(message);
+    }
+
+    @Override
+    public void showErrorView() {
+        stateControllerLayout.showError();
+    }
+
+    @Override
+    public void showLoadingView() {
+        stateControllerLayout.showLoading();
+    }
+
+    @Override
+    public void showEmptyView() {
+        stateControllerLayout.showEmpty();
+    }
+
+    @Override
+    public void showSnackBar(String msg){
+        super.showSnackBar(msg);
+    }
+
+    @Override
+    public long getLastTweetId() {
+        TwitterAdapter adapter = (TwitterAdapter) recyclerView.getAdapter();
+        if(adapter != null){
+            return adapter.getLastTweetId();
+        }
+        return 0;
+    }
+
+    @Override
+    public void setPbLoadMoreTweetsVisible() {
+        pbLoadMoreTweets.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setPbLoadMoreTweetsGone() {
+        pbLoadMoreTweets.setVisibility(View.GONE);
+    }
+
+    @Override
+    public String getStringRes(@StringRes int id){
+        return context.getString(id);
     }
 
 
     public void searchTweets(String keywords) {
-        getP().searchTweets(keywords);
+        twitterPresenter.searchTweets(keywords);
     }
 
 
     @Override
     public void onDetach() {
         super.onDetach();
-        getP().safelyUnsubscribeAll();
-    }
-
-    /**
-     * Getters
-     *
-     * @return
-     */
-    public ProgressBar getPbLoadMoreTweets() {
-        return pbLoadMoreTweets;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    public BaseStateControllerLayout getStateControllerLayout() {
-        return stateControllerLayout;
+        twitterPresenter.unsubscribeAll();
     }
 }

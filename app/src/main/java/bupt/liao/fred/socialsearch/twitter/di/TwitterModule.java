@@ -2,12 +2,14 @@ package bupt.liao.fred.socialsearch.twitter.di;
 
 import android.content.Context;
 
-import javax.inject.Singleton;
-
 import bupt.liao.fred.socialsearch.BuildConfig;
-import bupt.liao.fred.socialsearch.twitter.model.GPSmanager;
+import bupt.liao.fred.socialsearch.app.gps.GPSmanager;
+import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
+import bupt.liao.fred.socialsearch.app.scope.PerFragment;
+import bupt.liao.fred.socialsearch.twitter.TwitterContract;
 import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
 import bupt.liao.fred.socialsearch.twitter.model.TwitterApiImpl;
+import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import dagger.Module;
 import dagger.Provides;
 import twitter4j.TwitterFactory;
@@ -22,25 +24,17 @@ import twitter4j.conf.ConfigurationBuilder;
 
 @Module
 public final class TwitterModule {
-    private ITwitterApi twitterApi = null;
-    private Context context;
 
-    public TwitterModule(Context context) {
-        this.context = context;
+    @Provides
+    @PerFragment
+    public ITwitterApi provideTwitterApi(Configuration configuration) {
+        final TwitterFactory twitterFactory = new TwitterFactory(configuration);
+        return new TwitterApiImpl(twitterFactory.getInstance());
     }
 
     @Provides
-    @Singleton
-    public ITwitterApi provideTwitterApi() {
-        if (twitterApi == null) {
-            final Configuration configuration = createConfiguration();
-            final TwitterFactory twitterFactory = new TwitterFactory(configuration);
-            twitterApi = new TwitterApiImpl(twitterFactory.getInstance());
-        }
-        return twitterApi;
-    }
-
-    private Configuration createConfiguration() {
+    @PerFragment
+    public Configuration provideConfiguration() {
         final ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setDebugEnabled(true)
                 .setOAuthConsumerKey(BuildConfig.TWITTER_CONSUMER_KEY)
@@ -51,10 +45,4 @@ public final class TwitterModule {
         return configurationBuilder.build();
     }
 
-
-    @Provides
-    @Singleton
-    GPSmanager provideGPSmanager() {
-        return new GPSmanager(context);
-    }
 }

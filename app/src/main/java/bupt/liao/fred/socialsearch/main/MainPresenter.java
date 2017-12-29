@@ -1,18 +1,18 @@
 package bupt.liao.fred.socialsearch.main;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
 
-import bupt.liao.fred.socialsearch.app.BaseApplication;
+import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
 import bupt.liao.fred.socialsearch.kit.PermissionKit;
-import bupt.liao.fred.socialsearch.mvp.presenter.BasePresenter;
+import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,35 +26,32 @@ import timber.log.Timber;
  * for MainActivity
  */
 
-public class MainPresenter extends BasePresenter<MainActivity> {
+public class MainPresenter extends BasePresenter<MainContract.MainView> implements MainContract.MainPresenter{
 
-    private Context context;
-
+    private SharedPrefsHelper sharedPrefsHelper;
     /**
      * For search history
      * Key for get saved search history from sharedpreference
      */
-    public static String HISTORY_KEY = "history";
+    static final String HISTORY_KEY = "history";
 
-    Subscription subGetHistorySet;
+    Set<String> historySuggestions = new HashSet<>();
 
-    Subscription subSaveHistorySet;
+    private Subscription subGetHistorySet;
 
-    private MainPresenter(Context context) {
-        this.context = context;
+    @Inject
+    public MainPresenter(MainContract.MainView view,
+                         SharedPrefsHelper sharedPrefsHelper) {
+        super(view);
+        this.sharedPrefsHelper = sharedPrefsHelper;
     }
 
-    @Singleton
-    public static MainPresenter newInstance(Context context) {
-        return new MainPresenter(context);
-    }
 
     //Asynchronously read search history from sharedPreference
-    public void initHistorySet() {
-        safelyUnsubscribe(subGetHistorySet, subSaveHistorySet);
-        subGetHistorySet = BaseApplication
-                .getComponent()
-                .getSharedPrefsHelper()
+    @Override
+    public void getHistorySet() {
+        safelyUnsubscribe(subGetHistorySet);
+        subGetHistorySet = sharedPrefsHelper
                 .getStringSet(HISTORY_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,12 +66,17 @@ public class MainPresenter extends BasePresenter<MainActivity> {
 
                     @Override
                     public void onNext(Set<String> set) {
-                        getV().setHistorySuggestions(set);
-                        String[] suggestions = getV().getHistorySuggestions().toArray(new String[getV().getHistorySuggestions().size()]);
-                        getV().searchView.setSuggestions(suggestions);
-                        getV().searchView.showSuggestions();
+                        historySuggestions = set;
+                        String[] suggestions = set.toArray(new String[set.size()]);
+                        v.setSuggestions(suggestions);
+                        v.showSuggestions();
                     }
                 });
+    }
+
+    @Override
+    public void saveHistorySet() {
+        sharedPrefsHelper.put(HISTORY_KEY, historySuggestions);
     }
 
     /**
@@ -93,15 +95,27 @@ public class MainPresenter extends BasePresenter<MainActivity> {
     /**
      * Enables the location permission if the fine location permission has been granted.
      */
-    public void enableLocationPermission() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    public void enableLocationPermission(AppCompatActivity appCompatActivity) {
+        if (ContextCompat.checkSelfPermission(appCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
-            PermissionKit.requestPermission(getV(), PermissionKit.LOCATION_PERMISSION_REQUEST_CODE,
+            PermissionKit.requestPermission(appCompatActivity, PermissionKit.LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, false);
         } else {
             // Access to the location has been granted to the app.
             Timber.d("Permission has been granted");
         }
+    }
+
+    @Override
+    public void addQueryToHistorySet(String query) {
+        historySuggestions.add(query);
+        String[] suggestions = historySuggestions.toArray(new String[historySuggestions.size()]);
+        v.setSuggestions(suggestions);
+    }
+
+    @Override
+    public void unsubscribeAll() {
+        safelyUnsubscribe(subGetHistorySet);
     }
 }

@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.view;
+package bupt.liao.fred.socialsearch.ui.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -10,7 +10,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import bupt.liao.fred.socialsearch.R;
 

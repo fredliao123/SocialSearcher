@@ -19,20 +19,21 @@ import timber.log.Timber;
 public final class NetWorkApiImpl implements INetWorkApi {
 
     private ReactiveNetwork reactiveNetwork;
+    private Context context;
 
     @Inject
-    public NetWorkApiImpl(ReactiveNetwork reactiveNetwork) {
+    public NetWorkApiImpl(ReactiveNetwork reactiveNetwork, Context context) {
         this.reactiveNetwork = reactiveNetwork;
+        this.context = context;
     }
 
     /**
      * Check internet connection
      *
-     * @param context
      * @return if the internet is connected
      */
     @Override
-    public boolean isConnectedToInternet(Context context) {
+    public boolean isConnectedToInternet() {
         try {
             final ConnectivityStatus status = reactiveNetwork.getConnectivityStatus(context, true);
             final boolean connectedToWifi = status == ConnectivityStatus.WIFI_CONNECTED_HAS_INTERNET;
@@ -47,11 +48,10 @@ public final class NetWorkApiImpl implements INetWorkApi {
     /**
      * Observe the connection of internet. inform observer when internet status changed
      *
-     * @param context
      * @return
      */
     @Override
-    public Observable<ConnectivityStatus> observeConnectivity(Context context) {
+    public Observable<ConnectivityStatus> observeConnectivity() {
         return new ReactiveNetwork().enableInternetCheck().observeConnectivity(context);
     }
 }

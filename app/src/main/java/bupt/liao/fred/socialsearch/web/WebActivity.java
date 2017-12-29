@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.mvp.view.ui;
+package bupt.liao.fred.socialsearch.web;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,10 +13,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import javax.inject.Inject;
+
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.app.BaseApplication;
-import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
-import bupt.liao.fred.socialsearch.mvp.view.BaseStateControllerLayout;
+import bupt.liao.fred.socialsearch.app.App;
+import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
+import bupt.liao.fred.socialsearch.ui.common.BaseActivity;
+import bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout;
 import butterknife.BindView;
 
 /**
@@ -26,6 +29,9 @@ import butterknife.BindView;
  */
 
 public class WebActivity extends BaseActivity{
+
+    @Inject
+    INetWorkApi netWorkApi;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -47,8 +53,7 @@ public class WebActivity extends BaseActivity{
     public void initData(Bundle savedInstanceState) {
         url = getIntent().getStringExtra(PARAM_URL);
         desc = getIntent().getStringExtra(PARAM_DESC);
-
-
+        initInjection();
         initToolbar();
         initContentLayout();
         initRefreshLayout();
@@ -57,16 +62,19 @@ public class WebActivity extends BaseActivity{
         }else{
             contentLayout.showError();
         }
+    }
 
+    private void initInjection(){
+        ((App)getApplication()).getComponent().inject(this);
     }
 
     private void initContentLayout() {
-        contentLayout.loadingView(View.inflate(context, R.layout.view_loading, null));
-        contentLayout.errorView(View.inflate(context,R.layout.view_error, null));
+        contentLayout.loadingView(View.inflate(this, R.layout.view_loading, null));
+        contentLayout.errorView(View.inflate(this,R.layout.view_error, null));
     }
 
     private boolean checkInternet(){
-        return BaseApplication.getComponent().getNetWorkApi().isConnectedToInternet(context);
+        return netWorkApi.isConnectedToInternet();
     }
 
     private void initRefreshLayout() {
@@ -178,8 +186,4 @@ public class WebActivity extends BaseActivity{
         return R.layout.activity_web;
     }
 
-    @Override
-    public Object newP() {
-        return null;
-    }
 }

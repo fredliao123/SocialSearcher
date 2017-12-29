@@ -1,8 +1,9 @@
-package bupt.liao.fred.socialsearch.mvp.view;
+package bupt.liao.fred.socialsearch.ui.view;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -14,8 +15,9 @@ import com.trello.rxlifecycle2.components.support.RxFragment;
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
-import bupt.liao.fred.socialsearch.mvp.presenter.IPresenter;
 import butterknife.Unbinder;
+import dagger.android.AndroidInjector;
+import dagger.android.support.AndroidSupportInjection;
 import timber.log.Timber;
 
 /**
@@ -24,13 +26,17 @@ import timber.log.Timber;
  * Description:BaseFragment using MVP model
  */
 
-public abstract class BaseFragment <P extends IPresenter> extends RxFragment implements IViewBase<P> {
+public abstract class BaseFragment extends RxFragment {
 
-    private P p;
-    protected Activity context;
-    private View rootView;
+
+    protected Context context;
+    protected View rootView;
     protected LayoutInflater layoutInflater;
-    private Unbinder unbinder;
+    protected Unbinder unbinder;
+
+    protected abstract int getLayoutId();
+
+    protected abstract void initData(@Nullable Bundle savedInstanceState);
 
     @Nullable
     @Override
@@ -49,7 +55,6 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
                 Timber.d("BaseFragment: rootView is null, no layout id is sent in");
             }
         }
-
         return rootView;
     }
 
@@ -64,29 +69,14 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         initData(savedInstanceState);
     }
 
-    @Override
     public void bindUI(View rootView) {
         unbinder = KnifeKit.bind(this, rootView);
-    }
-
-
-
-    protected P getP() {
-        if (p == null) {
-            p = newP();
-            if (p != null) {
-                p.attachV(this);
-            }
-        }
-        return p;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity) {
-            this.context = (Activity) context;
-        }
+        this.context = context;
     }
 
     @Override
@@ -95,10 +85,6 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         context = null;
     }
 
-    @Override
-    public boolean useEventBus() {
-        return false;
-    }
 
     @Override
     public void onDestroyView() {
@@ -106,23 +92,16 @@ public abstract class BaseFragment <P extends IPresenter> extends RxFragment imp
         if (useEventBus()) {
             BusProvider.getBus().unregister(this);
         }
-        if (getP() != null) {
-            getP().detachV();
-        }
-        p = null;
+        unbinder.unbind();
     }
 
-    @Override
-    public int getOptionsMenuId() {
-        return 0;
+    protected boolean useEventBus() {
+        return false;
     }
 
-    @Override
-    public void bindEvent() {
+    protected void bindEvent() {}
 
-    }
-
-    public void showSnackBar(final String message) {
+    protected void showSnackBar(final String message) {
         final View containerId = getActivity().findViewById(R.id.container);
         Snackbar.make(containerId, message, Snackbar.LENGTH_LONG).show();
     }

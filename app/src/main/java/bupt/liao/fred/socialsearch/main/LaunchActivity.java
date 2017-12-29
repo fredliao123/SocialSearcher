@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import bupt.liao.fred.flipviewlibrary.FlipView;
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.mvp.view.BaseActivity;
+import bupt.liao.fred.socialsearch.ui.common.BaseActivity;
 
 /**
  * Created by Fred.Liao on 2017/12/10.
@@ -46,8 +46,4 @@ public class LaunchActivity extends BaseActivity {
         return R.layout.activity_launch;
     }
 
-    @Override
-    public Object newP() {
-        return null;
-    }
 }
