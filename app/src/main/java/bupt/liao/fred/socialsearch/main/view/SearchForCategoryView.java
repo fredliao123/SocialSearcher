@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.main;
+package bupt.liao.fred.socialsearch.main.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

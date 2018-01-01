@@ -35,7 +35,6 @@ public final class App extends Application {
                 gPSmanagerModule(new GPSmanagerModule()).
                 sharedPrefsHelperModule(new SharedPrefsHelperModule()).
                 build();
-
     }
 
     /**

@@ -1,5 +1,6 @@
 package bupt.liao.fred.socialsearch.main;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,15 +20,17 @@ import javax.inject.Inject;
 
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.app.App;
+import bupt.liao.fred.socialsearch.main.permission.IPermissionDialogController;
+import bupt.liao.fred.socialsearch.main.permission.LocationPermissionManager;
+import bupt.liao.fred.socialsearch.main.view.AdvancedSearchView;
+import bupt.liao.fred.socialsearch.main.view.ICategoryViewController;
+import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import bupt.liao.fred.socialsearch.ui.common.BaseActivity;
 import bupt.liao.fred.socialsearch.ui.view.BaseFragmentPagerAdapter;
-import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
 import butterknife.BindView;
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasFragmentInjector;
 import timber.log.Timber;
+
+import static bupt.liao.fred.socialsearch.main.permission.LocationPermissionManager.LOCATION_PERMISSION_REQUEST_CODE;
 
 /**
  * Created by Fred.Liao on 2017/12/4.
@@ -40,7 +43,7 @@ import timber.log.Timber;
  */
 
 
-public class MainActivity extends BaseActivity implements MainContract.MainView,ICategoryViewController {
+public class MainActivity extends BaseActivity implements MainContract.MainView, ICategoryViewController, IPermissionDialogController {
 
     @Inject
     MainPresenter presenter;
@@ -71,7 +74,7 @@ public class MainActivity extends BaseActivity implements MainContract.MainView,
 
 
     @Override
-    public void onCreate(Bundle saveInstanceState){
+    public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
     }
 
@@ -83,11 +86,12 @@ public class MainActivity extends BaseActivity implements MainContract.MainView,
         presenter.getHistorySet();
         initViewPager();
         showWelcomeView();
+        requestLocationPermission();
     }
 
-    private void initInjection(){
+    private void initInjection() {
         DaggerMainComponent.builder().
-                appComponent(((App)getApplication()).getComponent()).
+                appComponent(((App) getApplication()).getComponent()).
                 mainModule(new MainModule(this)).
                 build().
                 inject(this);
@@ -227,7 +231,7 @@ public class MainActivity extends BaseActivity implements MainContract.MainView,
     }
 
     @Override
-    public void isLocationPermissionGranted() {
+    public void requestLocationPermission() {
         presenter.enableLocationPermission(this);
     }
 
@@ -239,5 +243,27 @@ public class MainActivity extends BaseActivity implements MainContract.MainView,
     @Override
     public void showSuggestions() {
         searchView.showSuggestions();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (presenter.isPermissionGranted(permissions, grantResults, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    searchView.setCategoryNearEnabled();
+                } else {
+                    searchView.setCategoryNearDisabled();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void dialogCancelled() {
+        searchView.setCategoryNearDisabled();
     }
 }

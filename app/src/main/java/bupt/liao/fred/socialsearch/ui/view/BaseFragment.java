@@ -92,7 +92,7 @@ public abstract class BaseFragment extends RxFragment {
         if (useEventBus()) {
             BusProvider.getBus().unregister(this);
         }
-        unbinder.unbind();
+        KnifeKit.unbind(unbinder);
     }
 
     protected boolean useEventBus() {

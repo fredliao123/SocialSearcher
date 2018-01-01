@@ -1,5 +1,6 @@
 package bupt.liao.fred.socialsearch.main;
 
+import android.Manifest;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.Set;
@@ -19,6 +20,7 @@ interface MainContract {
         void getHistorySet();
         void saveHistorySet();
         void enableLocationPermission(AppCompatActivity appCompatActivity);
+        boolean isPermissionGranted(String[] permissions, int[] grantResult, String permission);
         void addQueryToHistorySet(String query);
     }
 

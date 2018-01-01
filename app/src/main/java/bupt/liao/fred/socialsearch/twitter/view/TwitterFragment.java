@@ -27,7 +27,6 @@ import bupt.liao.fred.socialsearch.ui.view.BaseStateControllerLayout;
 import bupt.liao.fred.socialsearch.twitter.TwitterContract;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import butterknife.BindView;
-import dagger.android.support.AndroidSupportInjection;
 import twitter4j.Status;
 
 /**

@@ -1,6 +1,5 @@
-package bupt.liao.fred.socialsearch.main;
+package bupt.liao.fred.socialsearch.main.view;
 
-import android.Manifest;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.kit.PermissionKit;
 import bupt.liao.fred.socialsearch.kit.drawingKit;
 import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import timber.log.Timber;
@@ -181,7 +179,7 @@ public class AdvancedSearchView extends MaterialSearchView {
                 showSearchHintView();
                 TwitterPresenter.searchForNear();
                 categoryViewController.changeCategoryViewShowStatus();
-                categoryViewController.isLocationPermissionGranted();
+                categoryViewController.requestLocationPermission();
             } else if (v.getId() == R.id.saerch_for_until) {
                 Timber.d("search for until");
                 showTimePicker();
@@ -232,5 +230,19 @@ public class AdvancedSearchView extends MaterialSearchView {
 
     public void setCategoryViewController(ICategoryViewController categoryViewController) {
         this.categoryViewController = categoryViewController;
+    }
+
+    /**
+     * If the location permission is granted then the Near category is enabled
+     */
+    public void setCategoryNearEnabled(){
+        searchForCategoryView.searchForNear.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * If the location permission is granted then the Near category is disabled
+     */
+    public void setCategoryNearDisabled(){
+        searchForCategoryView.searchForNear.setVisibility(View.GONE);
     }
 }

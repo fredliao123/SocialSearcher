@@ -1,4 +1,4 @@
-package bupt.liao.fred.socialsearch.main;
+package bupt.liao.fred.socialsearch.main.view;
 
 /**
  * Created by Fred.Liao on 2017/12/9.
@@ -10,5 +10,5 @@ package bupt.liao.fred.socialsearch.main;
 public interface ICategoryViewController {
     void changeCategoryViewShowStatus();
 
-    void isLocationPermissionGranted();
+    void requestLocationPermission();
 }

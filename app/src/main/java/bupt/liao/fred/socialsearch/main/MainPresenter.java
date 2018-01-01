@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
-import bupt.liao.fred.socialsearch.kit.PermissionKit;
+import bupt.liao.fred.socialsearch.main.permission.LocationPermissionManager;
 import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
 import rx.Subscriber;
 import rx.Subscription;
@@ -27,6 +27,9 @@ import timber.log.Timber;
  */
 
 public class MainPresenter extends BasePresenter<MainContract.MainView> implements MainContract.MainPresenter{
+
+    @Inject
+    LocationPermissionManager locationPermissionManager;
 
     private SharedPrefsHelper sharedPrefsHelper;
     /**
@@ -99,12 +102,16 @@ public class MainPresenter extends BasePresenter<MainContract.MainView> implemen
         if (ContextCompat.checkSelfPermission(appCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
-            PermissionKit.requestPermission(appCompatActivity, PermissionKit.LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, false);
+            locationPermissionManager.requestPermission();
         } else {
             // Access to the location has been granted to the app.
             Timber.d("Permission has been granted");
         }
+    }
+
+    @Override
+    public boolean isPermissionGranted(String[] permissions, int[] grantResult, String permission) {
+        return locationPermissionManager.isPermissionGranted(permissions, grantResult, permission);
     }
 
     @Override

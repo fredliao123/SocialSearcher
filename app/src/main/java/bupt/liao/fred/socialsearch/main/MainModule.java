@@ -1,7 +1,11 @@
 package bupt.liao.fred.socialsearch.main;
 
+import android.Manifest;
+import android.support.v7.app.AppCompatActivity;
+
 import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
 import bupt.liao.fred.socialsearch.app.scope.PerAcitivity;
+import bupt.liao.fred.socialsearch.main.permission.LocationPermissionManager;
 import bupt.liao.fred.socialsearch.twitter.di.TwitterModule;
 import bupt.liao.fred.socialsearch.twitter.di.TwitterViewModule;
 import bupt.liao.fred.socialsearch.twitter.view.TwitterFragment;
@@ -26,5 +30,12 @@ public class MainModule {
     @PerAcitivity
     MainContract.MainView provideMainView(){
         return view;
+    }
+
+    @Provides
+    @PerAcitivity
+    LocationPermissionManager provideLoacationPermissionManager(){
+        return new LocationPermissionManager((AppCompatActivity) view, LocationPermissionManager.LOCATION_PERMISSION_REQUEST_CODE,
+                Manifest.permission.ACCESS_FINE_LOCATION, false);
     }
 }

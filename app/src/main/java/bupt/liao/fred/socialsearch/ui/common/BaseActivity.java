@@ -80,7 +80,7 @@ public abstract class BaseActivity extends RxAppCompatActivity{
         if (useEventBus()) {
             BusProvider.getBus().unregister(this);
         }
-        unbinder.unbind();
+        KnifeKit.unbind(unbinder);
     }
 
     @Override

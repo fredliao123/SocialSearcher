@@ -14,7 +14,7 @@
 
         <include layout="@layout/toolbar"/>
 
-        <bupt.liao.fred.socialsearch.main.AdvancedSearchView
+        <bupt.liao.fred.socialsearch.main.view.AdvancedSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

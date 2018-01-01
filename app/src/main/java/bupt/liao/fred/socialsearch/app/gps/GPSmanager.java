@@ -181,7 +181,7 @@ public class GPSmanager extends Service implements LocationListener {
      */
     public boolean showSettingsAlert() {
         //Before showing the dialog, check if GPS and NetWork are actually disabled
-        //Because this can also becaused by denied permission
+        //Because this can also be caused by denied permission
         locationManager = (LocationManager) mContext
                 .getSystemService(LOCATION_SERVICE);
         // getting GPS status
