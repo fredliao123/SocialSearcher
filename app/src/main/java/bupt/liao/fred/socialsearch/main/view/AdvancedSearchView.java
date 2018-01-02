@@ -20,7 +20,6 @@ import java.util.Date;
 
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.kit.drawingKit;
-import bupt.liao.fred.socialsearch.twitter.presenter.TwitterPresenter;
 import timber.log.Timber;
 
 /**
@@ -71,7 +70,6 @@ public class AdvancedSearchView extends MaterialSearchView {
         init(context);
     }
 
-    //TODO
     private void init(Context context) {
         this.context = context;
         searchLayout = findViewById(R.id.search_layout);
@@ -104,20 +102,13 @@ public class AdvancedSearchView extends MaterialSearchView {
         searchHintView = LayoutInflater.from(context).inflate(R.layout.search_view_hint, null);
         hintText = searchHintView.findViewById(R.id.search_hint_text);
         cancelHint = searchHintView.findViewById(R.id.cancel_hint);
-        cancelHint.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismissSearchHintView();
-                categoryViewController.changeCategoryViewShowStatus();
-                TwitterPresenter.clearSearchHint();
-            }
-        });
+        cancelHint.setOnClickListener(searchForCategoryOnClickListener);
         RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams2.addRule(RelativeLayout.RIGHT_OF, R.id.action_up_btn);
         layoutParams2.addRule(RelativeLayout.CENTER_VERTICAL);
         searchHintView.setLayoutParams(layoutParams2);
         searchTopBar.addView(searchHintView);
-        dismissSearchHintView();
+        searchHintView.setVisibility(GONE);
     }
 
     /**
@@ -136,10 +127,6 @@ public class AdvancedSearchView extends MaterialSearchView {
      */
     public void showSearchHintView() {
         searchHintView.setVisibility(VISIBLE);
-    }
-
-    public void dismissSearchHintView() {
-        searchHintView.setVisibility(GONE);
     }
 
     public void setHintText(String text) {
@@ -171,18 +158,21 @@ public class AdvancedSearchView extends MaterialSearchView {
                 Timber.d("Search for video");
                 setHintText(context.getResources().getString(R.string.search_for_video));
                 showSearchHintView();
-                TwitterPresenter.searchForVideo();
+                categoryViewController.searchForVideo();
                 categoryViewController.changeCategoryViewShowStatus();
             } else if (v.getId() == R.id.saerch_for_near) {
                 Timber.d("search for near");
                 setHintText(context.getResources().getString(R.string.search_for_near));
                 showSearchHintView();
-                TwitterPresenter.searchForNear();
+                categoryViewController.searchForNear();
                 categoryViewController.changeCategoryViewShowStatus();
-                categoryViewController.requestLocationPermission();
             } else if (v.getId() == R.id.saerch_for_until) {
                 Timber.d("search for until");
                 showTimePicker();
+            } else if (v.getId() == R.id.cancel_hint) {
+                searchHintView.setVisibility(GONE);
+                categoryViewController.clearSearchHint();
+                categoryViewController.changeCategoryViewShowStatus();
             }
         }
     };
@@ -202,7 +192,7 @@ public class AdvancedSearchView extends MaterialSearchView {
                 setHintText(context.getResources().getString(R.string.search_for_util));
                 showSearchHintView();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                TwitterPresenter.searchForUnitl(format.format(date));
+                categoryViewController.searchForUntil(format.format(date));
                 categoryViewController.changeCategoryViewShowStatus();
             }
         })
@@ -235,14 +225,14 @@ public class AdvancedSearchView extends MaterialSearchView {
     /**
      * If the location permission is granted then the Near category is enabled
      */
-    public void setCategoryNearEnabled(){
+    public void setCategoryNearEnabled() {
         searchForCategoryView.searchForNear.setVisibility(View.VISIBLE);
     }
 
     /**
      * If the location permission is granted then the Near category is disabled
      */
-    public void setCategoryNearDisabled(){
+    public void setCategoryNearDisabled() {
         searchForCategoryView.searchForNear.setVisibility(View.GONE);
     }
 }

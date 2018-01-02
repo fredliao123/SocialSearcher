@@ -9,9 +9,12 @@ import javax.inject.Inject;
 import bupt.liao.fred.socialsearch.R;
 import bupt.liao.fred.socialsearch.app.gps.GPSmanager;
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
-import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
+import bupt.liao.fred.socialsearch.app.rxbus.CategoryEvent;
+import bupt.liao.fred.socialsearch.app.rxbus.RxBus;
 import bupt.liao.fred.socialsearch.twitter.TwitterContract;
 import bupt.liao.fred.socialsearch.twitter.model.ITwitterApi;
+import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
+import io.reactivex.functions.Consumer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -36,68 +39,66 @@ public class TwitterPresenter extends BasePresenter<TwitterContract.TwitterView>
     protected ITwitterApi twitterApi;
     protected GPSmanager mGPSmanager;
     protected INetWorkApi netWorkApi;
+    protected RxBus rxBus;
 
     //flag for video search
-    public volatile static boolean SEARCH_VIDEO = false;
+    private volatile static boolean SEARCH_VIDEO = false;
     //flag for time search
-    public volatile static boolean SEARCH_UNTIL = false;
+    private volatile static boolean SEARCH_UNTIL = false;
     //flag for near search
-    public volatile static boolean SEARCH_NEAR = false;
+    private volatile static boolean SEARCH_NEAR = false;
     //Date for time search
-    public volatile static String UNITL_DATE = null;
+    private volatile static String UNITL_DATE = null;
     //Add string for video search
     private static final String VIDEO_FILTER = " filter:vine";
-
-    /**
-     * Method to set up search for video
-     */
-    public static void searchForVideo() {
-        SEARCH_VIDEO = true;
-        SEARCH_UNTIL = false;
-        SEARCH_NEAR = false;
-        UNITL_DATE = null;
-    }
-
-    /**
-     * Method to set up search for time
-     */
-    public static void searchForUnitl(String unitl_date) {
-        SEARCH_VIDEO = false;
-        SEARCH_UNTIL = true;
-        SEARCH_NEAR = false;
-        UNITL_DATE = unitl_date;
-    }
-
-    /**
-     * Method to set up search for near tweets
-     */
-    public static void searchForNear() {
-        SEARCH_VIDEO = false;
-        SEARCH_UNTIL = false;
-        SEARCH_NEAR = true;
-        UNITL_DATE = null;
-    }
-
-    /**
-     * Method to clear category search flag
-     */
-    public static void clearSearchHint() {
-        SEARCH_VIDEO = false;
-        SEARCH_UNTIL = false;
-        SEARCH_NEAR = false;
-        UNITL_DATE = null;
-    }
 
     @Inject
     public TwitterPresenter(TwitterContract.TwitterView view,
                             ITwitterApi twitterApi,
                             GPSmanager mGPSmanager,
-                            INetWorkApi netWorkApi
+                            INetWorkApi netWorkApi,
+                            RxBus rxBus
     ) {
         super(view);
         this.twitterApi = twitterApi;
         this.mGPSmanager = mGPSmanager;
         this.netWorkApi = netWorkApi;
+        this.rxBus = rxBus;
+        initRxBus();
+    }
+
+    private void initRxBus() {
+        rxBus.getEvents().subscribe(new Consumer<Object>() {
+            @Override
+            public void accept(Object event) {
+                if (event instanceof CategoryEvent) {
+                    clearSearchHint();
+                    switch (((CategoryEvent) event).getTag()) {
+                        case CategoryEvent.TAG_CLEAR:
+                            break;
+                        case CategoryEvent.TAG_NEAR:
+                            SEARCH_NEAR = true;
+                            break;
+                        case CategoryEvent.TAG_VIDEO:
+                            SEARCH_VIDEO = true;
+                            break;
+                        case CategoryEvent.TAG_UNTIL:
+                            SEARCH_UNTIL = true;
+                            UNITL_DATE = ((CategoryEvent) event).getDate();
+                            break;
+                        case CategoryEvent.TAG_DEFAULT:
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    private void clearSearchHint() {
+        SEARCH_VIDEO = false;
+        SEARCH_UNTIL = false;
+        SEARCH_NEAR = false;
+        UNITL_DATE = null;
     }
 
     /**

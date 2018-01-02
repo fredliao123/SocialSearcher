@@ -236,6 +236,26 @@ public class MainActivity extends BaseActivity implements MainContract.MainView,
     }
 
     @Override
+    public void clearSearchHint() {
+        presenter.clearSearchHint();
+    }
+
+    @Override
+    public void searchForVideo() {
+        presenter.searchForVideo();
+    }
+
+    @Override
+    public void searchForNear() {
+        presenter.searchForNear();
+    }
+
+    @Override
+    public void searchForUntil(String date) {
+        presenter.searchForUntil(date);
+    }
+
+    @Override
     public void setSuggestions(String[] suggestions) {
         searchView.setSuggestions(suggestions);
     }

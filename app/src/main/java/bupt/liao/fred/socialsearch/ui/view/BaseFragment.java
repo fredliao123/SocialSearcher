@@ -1,9 +1,7 @@
 package bupt.liao.fred.socialsearch.ui.view;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -13,11 +11,8 @@ import android.view.ViewGroup;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import butterknife.Unbinder;
-import dagger.android.AndroidInjector;
-import dagger.android.support.AndroidSupportInjection;
 import timber.log.Timber;
 
 /**
@@ -62,9 +57,6 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (useEventBus()) {
-            BusProvider.getBus().register(this);
-        }
         bindEvent();
         initData(savedInstanceState);
     }
@@ -89,14 +81,7 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (useEventBus()) {
-            BusProvider.getBus().unregister(this);
-        }
         KnifeKit.unbind(unbinder);
-    }
-
-    protected boolean useEventBus() {
-        return false;
     }
 
     protected void bindEvent() {}

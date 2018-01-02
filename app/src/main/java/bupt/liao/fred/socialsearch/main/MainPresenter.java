@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import bupt.liao.fred.socialsearch.app.data.SharedPrefsHelper;
+import bupt.liao.fred.socialsearch.app.rxbus.CategoryEvent;
+import bupt.liao.fred.socialsearch.app.rxbus.RxBus;
 import bupt.liao.fred.socialsearch.main.permission.LocationPermissionManager;
 import bupt.liao.fred.socialsearch.ui.common.BasePresenter;
 import rx.Subscriber;
@@ -26,12 +28,14 @@ import timber.log.Timber;
  * for MainActivity
  */
 
-public class MainPresenter extends BasePresenter<MainContract.MainView> implements MainContract.MainPresenter{
+public class MainPresenter extends BasePresenter<MainContract.MainView> implements MainContract.MainPresenter {
 
     @Inject
     LocationPermissionManager locationPermissionManager;
 
     private SharedPrefsHelper sharedPrefsHelper;
+
+    private RxBus rxBus;
     /**
      * For search history
      * Key for get saved search history from sharedpreference
@@ -44,9 +48,11 @@ public class MainPresenter extends BasePresenter<MainContract.MainView> implemen
 
     @Inject
     public MainPresenter(MainContract.MainView view,
-                         SharedPrefsHelper sharedPrefsHelper) {
+                         SharedPrefsHelper sharedPrefsHelper,
+                         RxBus rxbus) {
         super(view);
         this.sharedPrefsHelper = sharedPrefsHelper;
+        this.rxBus = rxbus;
     }
 
 
@@ -84,6 +90,7 @@ public class MainPresenter extends BasePresenter<MainContract.MainView> implemen
 
     /**
      * Unsubscribe subsciptions
+     *
      * @param subscriptions
      */
     private void safelyUnsubscribe(final Subscription... subscriptions) {
@@ -119,6 +126,37 @@ public class MainPresenter extends BasePresenter<MainContract.MainView> implemen
         historySuggestions.add(query);
         String[] suggestions = historySuggestions.toArray(new String[historySuggestions.size()]);
         v.setSuggestions(suggestions);
+    }
+
+    @Override
+    public void clearSearchHint() {
+        if(rxBus.hasObservers()) {
+            rxBus.send(new CategoryEvent(CategoryEvent.TAG_CLEAR));
+        }
+    }
+
+    @Override
+    public void searchForVideo() {
+        if(rxBus.hasObservers()) {
+            rxBus.send(new CategoryEvent(CategoryEvent.TAG_VIDEO));
+        }
+    }
+
+    @Override
+    public void searchForNear() {
+        if(rxBus.hasObservers()) {
+            rxBus.send(new CategoryEvent(CategoryEvent.TAG_NEAR));
+        }
+    }
+
+    @Override
+    public void searchForUntil(String date) {
+        if (rxBus.hasObservers()) {
+            CategoryEvent event = new CategoryEvent(CategoryEvent.TAG_UNTIL);
+            event.setDate(date);
+            rxBus.send(event);
+
+        }
     }
 
     @Override

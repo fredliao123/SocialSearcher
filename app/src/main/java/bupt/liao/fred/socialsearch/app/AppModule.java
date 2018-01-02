@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import bupt.liao.fred.socialsearch.app.network.INetWorkApi;
 import bupt.liao.fred.socialsearch.app.network.NetWorkApiImpl;
+import bupt.liao.fred.socialsearch.app.rxbus.RxBus;
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.AndroidInjectionModule;
@@ -38,11 +39,5 @@ public class AppModule {
     @Singleton
     Application provideApplication(){
         return application;
-    }
-
-    @Provides
-    @Singleton
-    INetWorkApi provideNetWorkApi(Context context) {
-        return new NetWorkApiImpl(new ReactiveNetwork(), context);
     }
 }

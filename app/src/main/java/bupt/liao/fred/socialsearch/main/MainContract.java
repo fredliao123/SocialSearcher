@@ -22,6 +22,10 @@ interface MainContract {
         void enableLocationPermission(AppCompatActivity appCompatActivity);
         boolean isPermissionGranted(String[] permissions, int[] grantResult, String permission);
         void addQueryToHistorySet(String query);
+        void clearSearchHint();
+        void searchForVideo();
+        void searchForNear();
+        void searchForUntil(String date);
     }
 
 }

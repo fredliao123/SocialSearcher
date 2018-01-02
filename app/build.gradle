@@ -86,6 +86,7 @@ dependencies {
     implementation 'io.reactivex:rxjava:1.1.1'
     implementation 'io.reactivex:rxandroid:1.1.0'
     implementation 'com.github.pwittchen:reactivenetwork:0.2.0'
+    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
     //dependency injection & view injection
     implementation "com.google.dagger:dagger:${versionControl["DaggerVersion"]}"

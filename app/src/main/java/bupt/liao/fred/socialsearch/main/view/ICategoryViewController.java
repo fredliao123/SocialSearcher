@@ -11,4 +11,12 @@ public interface ICategoryViewController {
     void changeCategoryViewShowStatus();
 
     void requestLocationPermission();
+
+    void clearSearchHint();
+
+    void searchForVideo();
+
+    void searchForNear();
+
+    void searchForUntil(String date);
 }

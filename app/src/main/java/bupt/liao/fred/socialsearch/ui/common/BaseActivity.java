@@ -1,9 +1,6 @@
 package bupt.liao.fred.socialsearch.ui.common;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.Menu;
@@ -11,17 +8,9 @@ import android.view.View;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import bupt.liao.fred.socialsearch.R;
-import bupt.liao.fred.socialsearch.event.BusProvider;
 import bupt.liao.fred.socialsearch.kit.KnifeKit;
 import butterknife.Unbinder;
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasFragmentInjector;
 
 /**
  * Created by Fred.Liao on 2017/12/4.
@@ -51,16 +40,9 @@ public abstract class BaseActivity extends RxAppCompatActivity{
         unbinder = KnifeKit.bind(this);
     }
 
-    public boolean useEventBus() {
-        return false;
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        if (useEventBus()) {
-            BusProvider.getBus().register(this);
-        }
     }
 
     @Override
@@ -77,9 +59,6 @@ public abstract class BaseActivity extends RxAppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (useEventBus()) {
-            BusProvider.getBus().unregister(this);
-        }
         KnifeKit.unbind(unbinder);
     }
 
